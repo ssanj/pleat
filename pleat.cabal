@@ -1,0 +1,81 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 45a7013aaa578156671971006d61c537183f8dba11d6b5294991a205b8ddc628
+
+name:           pleat
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/ssanj/pleat#readme>
+homepage:       https://github.com/ssanj/pleat#readme
+bug-reports:    https://github.com/ssanj/pleat/issues
+author:         sanjiv sahayam
+maintainer:     sanjsmailbox@gmail.com
+copyright:      (c) 2020 sanjiv sahayam
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/ssanj/pleat
+
+library
+  exposed-modules:
+      Api
+      Commands.Git
+      Commands.Model
+      Internal.File
+      Internal.Safe
+      Internal.Terminal
+      Internal.Time
+      Lib
+      Parser.GitParser
+  other-modules:
+      Paths_pleat
+  hs-source-dirs:
+      src
+  ghc-options: -Weverything -fprint-potential-instances -fprint-expanded-synonyms -fno-warn-missing-import-lists -fno-warn-all-missed-specialisations -Wno-implicit-prelude -Wno-unsafe -Wno-safe -Wno-type-defaults
+  build-depends:
+      base >=4.7 && <5
+    , directory
+    , parsec
+    , process
+    , text
+    , thyme
+  default-language: Haskell2010
+
+executable pleat
+  main-is: Main.hs
+  other-modules:
+      Paths_pleat
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , pleat
+  default-language: Haskell2010
+
+test-suite pleat-test
+  type: exitcode-stdio-1.0
+  main-is: Driver.hs
+  other-modules:
+      Parser.GitParserSpec
+      Paths_pleat
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , parsec
+    , pleat
+    , tasty
+    , tasty-discover
+    , tasty-hunit
+  default-language: Haskell2010
