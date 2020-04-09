@@ -30,6 +30,7 @@ library:
   - directory
   - thyme
   - parsec
+  - colourista
 
   ghc-options:
   - -Weverything
