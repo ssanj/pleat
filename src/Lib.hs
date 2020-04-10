@@ -4,13 +4,8 @@ module Lib
       ) where
 
 import qualified Api as A
-import qualified Parser.GitParser as Git
+import qualified Format.GitBranch as GF
 import qualified Colourista.Pure  as Colour
-
-import Text.Parsec (parse)
-import Data.List   (isPrefixOf)
-
-data GitBranchType = Local Git.LocalBranch | Remote Git.RemoteBranch | InitialCommit
 
 -- Need to add Colour support
 prompt :: IO String
@@ -47,9 +42,9 @@ prompt = do
 
 processGitRepo :: IO (String, String)
 processGitRepo = do
-  branch       <- formatGitBranch . processGitBranch <$> A.gitBranchVerbose
-  status       <- isModified                         <$> A.gitStatusShort
-  pure (branch, processModified $ status)
+  branch       <- GF.processGitRepo <$> A.gitBranchVerbose
+  status       <- GF.isModified     <$> A.gitStatusShort
+  pure (branch, GF.processModified $ status)
 
 -- push to a config object
 maxPathLength :: Int
@@ -82,35 +77,3 @@ processTime Nothing = "-"
 processUser :: Maybe A.User  -> String
 processUser (Just (A.User user)) = user
 processUser Nothing = "-"
-
-processModified :: Bool -> String
-processModified True  = ":" <> (Colour.formatWith [Colour.cyan] "*" )
-processModified False = ""
-
-isModified       :: Maybe [String] -> Bool
-isModified       (Just output)
-  | any ((0 /=) . length) output = True
-  | otherwise                    = False
-isModified       Nothing         = False
-
-formatGitBranch :: Maybe GitBranchType -> String
-formatGitBranch (Just (Remote (Git.RemoteBranch remote branch))) = "[" <> (Colour.formatWith [Colour.yellow] remote) <> "|" <> (Colour.formatWith [Colour.red] branch) <> "]"
-formatGitBranch (Just (Local (Git.LocalBranch branch)))          = "[" <> (Colour.formatWith [Colour.red] branch) <> "]"
-formatGitBranch (Just InitialCommit)                             = Colour.formatWith [Colour.red] "InitialCommit"
-formatGitBranch Nothing = "-"
-
--- TODO: Write a test for this
-processGitBranch :: Maybe [String] -> Maybe GitBranchType
-processGitBranch (Just linesOfOutput@(_:_)) = 
-  let matchedLines =  take 1 $ filter ("*" `isPrefixOf`) linesOfOutput
-  in case matchedLines of
-      []               -> Nothing
-      (branchString:_) ->
-        let remoteBranchParseResult = parse Git.remoteBranch "" branchString
-            localBranchParseResult  = parse Git.localBranch  "" branchString
-        in case (remoteBranchParseResult, localBranchParseResult) of
-                (Right (Just b@(Git.RemoteBranch _ _)),           _)                                 -> Just $ Remote b -- "[" <> remote <> "/" <> branch <> "]"
-                (_,                                               Right(Just l@(Git.LocalBranch _))) -> Just $ Local l-- "[" <> branch <> "]"
-                (_,                                               _)                                 -> Nothing -- "-"
-processGitBranch (Just [])              = Just InitialCommit -- This means that we got no lines of input for branches which indicates that it's an initial branch
-processGitBranch Nothing                = Nothing

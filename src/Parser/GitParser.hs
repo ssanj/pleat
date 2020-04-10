@@ -1,3 +1,5 @@
+{-# LANGUAGE DerivingStrategies #-}
+
 module Parser.GitParser
        (
           -- Data types
@@ -14,8 +16,8 @@ import qualified Text.Parsec as P
 
 type Parser = P.Parsec String ()
 
-newtype LocalBranch = LocalBranch String 
-data RemoteBranch = RemoteBranch { _remote :: String, _branch :: String }
+newtype LocalBranch = LocalBranch String deriving stock (Eq, Show)
+data RemoteBranch = RemoteBranch { _remote :: String, _branch :: String } deriving stock (Eq, Show)
 
 -- * master b93b0b7 More WIP
 localBranch :: Parser (Maybe LocalBranch)

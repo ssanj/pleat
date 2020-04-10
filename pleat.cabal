@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8c884270fb6c5a1c09acd259ff7e2cfda7e56828855194d85c2bae13a53d1d6b
+-- hash: b5ad456ba66c7f1b1a1782a03958593127506e1f50b2e03fb3a6520bfa69fcf6
 
 name:           pleat
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Api
       Commands.Git
       Commands.Model
+      Format.GitBranch
       Internal.File
       Internal.Safe
       Internal.Terminal
@@ -67,6 +68,7 @@ test-suite pleat-test
   type: exitcode-stdio-1.0
   main-is: Driver.hs
   other-modules:
+      Format.GitBranchSpec
       Parser.GitParserSpec
       Paths_pleat
   hs-source-dirs:
