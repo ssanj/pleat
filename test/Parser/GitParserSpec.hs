@@ -5,19 +5,8 @@ module Parser.GitParserSpec where
 import Test.Tasty                      (TestTree, testGroup)
 import Test.Tasty.HUnit                (Assertion, assertFailure, testCase, (@?=))
 import Data.Functor.Identity           (Identity)
-import Parser.GitParser                (LocalBranch(..), RemoteBranch(..), localBranch, remoteBranch)
+import Parser.GitParser                (LocalBranch(..), RemoteBranch(..), LocalAndRemoteBranch(..), localBranch, remoteBranch, localAndRemoteBranch)
 import Text.Parsec                     (parse)
-
--- test_all :: TestTree
--- test_all = 
---   testGroup 
---     "GitParser" 
---     [
---        testWithLocalBranch     "* master b93b0b7 More WIP"
---     ,  testWithoutLocalBranch  "Merge pull request #1715"
---     ,  testWithRemoteBranch    "* master b7fd5fb0 [origin/master] Merge pull request #1715 from jneira/fix-install-hoogle"
---     ,  testWithoutRemoteBranch "* master b93b0b7 More WIP"
---     ]
 
 unit_parseWithLocalBranch :: Assertion
 unit_parseWithLocalBranch =
@@ -57,3 +46,33 @@ unit_parseWithoutRemoteBranch =
                                       Just (RemoteBranch remote branchName) -> assertFailure $ "expected no remote branch but got: " <> remote <> "/" <> branchName
                                       Nothing                               -> pure ()
                                 ) parseResult
+
+unit_parseWithLocalAndRemoteBranch :: Assertion
+unit_parseWithLocalAndRemoteBranch = 
+  let parseResult = parse localAndRemoteBranch "" "* slave b7fd5fb0 [origin/master] Merge pull request #1715 from jneira/fix-install-hoogle" in
+  either (assertFailure . show) (\rBranch -> 
+                                    case rBranch of 
+                                      Just (LocalAndRemoteBranch (LocalBranch localBranchName) (Just (RemoteBranch remote remoteBranchName))) -> 
+                                        do 
+                                          localBranchName  @?= "slave"
+                                          remote           @?= "origin" 
+                                          remoteBranchName @?= "master"
+                                      Nothing                        -> assertFailure "Could not parse both Local and Remote branches as LocalAndRemoteBranch"
+                                ) parseResult
+
+unit_parseWithLocalAndRemoteBranchWithoutRemoteBranch :: Assertion
+unit_parseWithLocalAndRemoteBranchWithoutRemoteBranch = 
+  let parseResult = parse localAndRemoteBranch "" "* master b7fd5fb0 Merge pull request #1715 from jneira/fix-install-hoogle" in
+  either (assertFailure . show) (\rBranch -> 
+                                    case rBranch of 
+                                      Just (LocalAndRemoteBranch (LocalBranch localBranchName) rb) -> 
+                                        do 
+                                          localBranchName  @?= "master"
+                                          rb               @?= Nothing
+                                      Nothing                        -> assertFailure "Could not parse as LocalAndRemoteBranch with only local branch"
+                                ) parseResult
+
+unit_parseWithLocalAndRemoteBranchWithoutLocalBranch :: Assertion
+unit_parseWithLocalAndRemoteBranchWithoutLocalBranch = 
+  let parseResult = parse localAndRemoteBranch "" "master b7fd5fb0 Merge pull request #1715 from jneira/fix-install-hoogle" in
+  either (assertFailure . show) ((@?= Nothing)) parseResult
