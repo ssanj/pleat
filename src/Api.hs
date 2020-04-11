@@ -1,7 +1,7 @@
 module Api
       (
          -- Modules
-         module Internal.File        
+         module Internal.File
        , module Internal.Terminal
        , module Internal.Time
        ) where

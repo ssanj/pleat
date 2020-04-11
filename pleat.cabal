@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b5ad456ba66c7f1b1a1782a03958593127506e1f50b2e03fb3a6520bfa69fcf6
+-- hash: cb1c5911313b230fb011ef524371c585a80cc1ee413b11580b8b161f8747ab8b
 
 name:           pleat
 version:        0.1.0.0
@@ -31,6 +31,8 @@ library
       Commands.Git
       Commands.Model
       Format.GitBranch
+      Format.Path
+      Internal.BashColours
       Internal.File
       Internal.Safe
       Internal.Terminal
@@ -44,8 +46,8 @@ library
   ghc-options: -Weverything -fprint-potential-instances -fprint-expanded-synonyms -fno-warn-missing-import-lists -fno-warn-all-missed-specialisations -Wno-implicit-prelude -Wno-unsafe -Wno-safe -Wno-type-defaults
   build-depends:
       base >=4.7 && <5
-    , colourista
     , directory
+    , old-locale
     , parsec
     , process
     , text

@@ -29,8 +29,8 @@ library:
   - text
   - directory
   - thyme
+  - old-locale
   - parsec
-  - colourista
 
   ghc-options:
   - -Weverything

@@ -13,8 +13,8 @@ module Format.GitBranch
        ,  formatGitBranch
        ) where
 
-import qualified Parser.GitParser as Git
-import qualified Colourista.Pure  as Colour
+import qualified Parser.GitParser     as Git
+import qualified Internal.BashColours as Colour
 
 import Data.List   (isPrefixOf)
 import Text.Parsec (parse)
@@ -43,7 +43,7 @@ processGitBranch (Just [])              = Just InitialCommit -- This means that 
 processGitBranch Nothing                = Nothing
 
 processModified :: Bool -> String
-processModified True  = ":" <> (Colour.formatWith [Colour.cyan] "*" )
+processModified True  = ":" <> (modifiedColour "*" )
 processModified False = ""
 
 isModified       :: Maybe [String] -> Bool
@@ -56,7 +56,10 @@ processGitRepo ::   Maybe [String] -> String
 processGitRepo = formatGitBranch . processGitBranch
 
 branchColour :: String -> String
-branchColour = Colour.formatWith [Colour.red]
+branchColour = Colour.red
 
 remoteColour :: String -> String
-remoteColour = Colour.formatWith [Colour.yellow]
+remoteColour = Colour.yellow
+
+modifiedColour :: String -> String
+modifiedColour = Colour.cyan

@@ -14,7 +14,6 @@ module Parser.GitParser
        ) where
 
 import qualified Text.Parsec as P
--- import qualified Text.Parsec.Char as P
 
 type Parser = P.Parsec String ()
 
