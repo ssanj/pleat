@@ -22,4 +22,4 @@ getLocalTime =
   in ignoringError $ LocalTime . localTimeString <$> localTime
 
 localTimeString :: T.LocalTime -> String
-localTimeString = T.formatTime defaultTimeLocale "%d/%m/%y %T"
+localTimeString = T.formatTime defaultTimeLocale "%d/%m/%Y %T"
