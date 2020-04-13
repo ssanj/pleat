@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cb1c5911313b230fb011ef524371c585a80cc1ee413b11580b8b161f8747ab8b
+-- hash: a90f2f17115bff278ddd1abc876da34f99e62ec1f4fbc2c4fe9aad1ab91f2bd2
 
 name:           pleat
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Api
       Commands.Git
       Commands.Model
+      Config
       Format.GitBranch
       Format.Path
       Internal.BashColours
@@ -47,6 +48,7 @@ library
   build-depends:
       base >=4.7 && <5
     , directory
+    , hostname
     , old-locale
     , parsec
     , process

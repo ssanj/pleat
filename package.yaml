@@ -31,6 +31,7 @@ library:
   - thyme
   - old-locale
   - parsec
+  - hostname
 
   ghc-options:
   - -Weverything

@@ -7,11 +7,13 @@ import qualified Api as A
 import qualified Format.GitBranch as GF
 import qualified Format.Path      as PF
 
--- Need to add Colour support
-prompt :: IO String
-prompt = do
+import Config              (Config(..), Hostname(..))
+
+prompt :: Config -> IO String
+prompt config = do
   localTime    <- processTime    <$> A.getLocalTime
   user         <- processUser    <$> A.getUser
+  hostname     <- (processHostname (_overrideHostname config)) <$> A.getHostname
   path         <- PF.processPath <$> A.getCurrentDirectory
   isGitRepo    <- A.isGitRepo
   case isGitRepo of
@@ -21,7 +23,8 @@ prompt = do
               localTime <> 
               ":"       <> 
               user      <> 
-              "@mbp"    <> 
+              "@"       <> 
+              hostname  <> 
               ":"       <> 
               path      <>
               ":"       <>
@@ -34,11 +37,14 @@ prompt = do
               localTime <> 
               ":"       <> 
               user      <> 
-              "@mbp"    <> 
+              hostname  <> 
               ":"       <> 
               path      <>
               promptStart
         )
+
+processHostname :: Maybe Hostname -> Hostname -> String
+processHostname override actualHostname = maybe (_hostname actualHostname) _hostname override 
 
 processGitRepo :: IO (String, String)
 processGitRepo = do

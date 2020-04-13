@@ -1,6 +1,7 @@
 module Main where
 
 import Lib (prompt)
+import Config (defaultConfig)
 
 main :: IO ()
-main = prompt >>= putStrLn
+main = prompt defaultConfig >>= putStrLn
