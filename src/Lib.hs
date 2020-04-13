@@ -11,10 +11,10 @@ import Config              (Config(..), Hostname(..))
 
 prompt :: Config -> IO String
 prompt config = do
-  localTime    <- processTime    <$> A.getLocalTime
-  user         <- processUser    <$> A.getUser
-  hostname     <- (processHostname (_overrideHostname config)) <$> A.getHostname
-  path         <- PF.processPath <$> A.getCurrentDirectory
+  localTime    <- processTime      <$> A.getLocalTime
+  user         <- processUser      <$> A.getUser
+  hostname     <- (processHostname <$> A.getHostname) <*> pure (_overrideHostname config)
+  path         <- PF.processPath   <$> A.getCurrentDirectory
   isGitRepo    <- A.isGitRepo
   case isGitRepo of
     Just True -> do
@@ -43,8 +43,8 @@ prompt config = do
               promptStart
         )
 
-processHostname :: Maybe Hostname -> Hostname -> String
-processHostname override actualHostname = maybe (_hostname actualHostname) _hostname override 
+processHostname :: Hostname -> Maybe Hostname -> String
+processHostname actualHostname = maybe (_hostname actualHostname) _hostname 
 
 processGitRepo :: IO (String, String)
 processGitRepo = do
