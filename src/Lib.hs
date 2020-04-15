@@ -7,14 +7,14 @@ import qualified Api as A
 import qualified Format.GitBranch as GF
 import qualified Format.Path      as PF
 
-import Config              (Config(..), Hostname(..))
+import Config              (Config(..), Hostname(..), defaultMaxPathLength)
 
 prompt :: Config -> IO String
 prompt config = do
   localTime    <- processTime      <$> A.getLocalTime
   user         <- processUser      <$> A.getUser
   hostname     <- (processHostname <$> A.getHostname) <*> pure (_overrideHostname config)
-  path         <- PF.processPath   <$> A.getCurrentDirectory
+  path         <- (processPath config)   <$> A.getCurrentDirectory
   isGitRepo    <- A.isGitRepo
   case isGitRepo of
     Just True -> do
@@ -42,6 +42,9 @@ prompt config = do
               path      <>
               promptStart
         )
+
+processPath :: Config -> (Maybe A.CurrentDirectory) -> String
+processPath config = PF.processPath (maybe defaultMaxPathLength id (_maxPathLength config))
 
 processHostname :: Hostname -> Maybe Hostname -> String
 processHostname actualHostname = maybe (_hostname actualHostname) _hostname 

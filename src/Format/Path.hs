@@ -7,24 +7,22 @@ module Format.Path
 import qualified Api                  as A
 import qualified Internal.BashColours as Colour
 
-processPath :: Maybe A.CurrentDirectory -> String
-processPath = formatPath . getCurrentDirectory 
+import Config (MaxPathLength(..))
 
-getCurrentDirectory :: Maybe A.CurrentDirectory  -> String
-getCurrentDirectory (Just (A.CurrentDirectory pwd)) = 
+processPath :: MaxPathLength -> Maybe A.CurrentDirectory -> String
+processPath maxPathLength currentDir = formatPath $ getCurrentDirectory maxPathLength currentDir
+
+getCurrentDirectory :: MaxPathLength -> Maybe A.CurrentDirectory  -> String
+getCurrentDirectory (MaxPathLength maxPathLength) (Just (A.CurrentDirectory pwd)) = 
   let pathLength = length pwd
   in if pathLength > maxPathLength then
     "..." <> takeR (maxPathLength - 3) pwd
   else
     pwd
-getCurrentDirectory Nothing = "-"
+getCurrentDirectory _ Nothing = "-"
 
 formatPath :: String -> String
 formatPath = Colour.cyan
-
--- push to a config object
-maxPathLength :: Int
-maxPathLength = 40
 
 takeR :: Int -> [a] -> [a]
 takeR n xs 
