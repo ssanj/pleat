@@ -23,8 +23,10 @@ data GitBranchType = LocalAndRemote Git.LocalAndRemoteBranch  | InitialCommit de
 
 formatGitBranch :: Maybe GitBranchType -> String
 formatGitBranch (Just InitialCommit)                             = branchColour "InitialCommit"
-formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch localBranch) (Just (Git.RemoteBranch remote branch))))) = 
-  "[" <> (branchColour localBranch) <> " -> " <> (remoteColour remote) <> "/" <> (branchColour branch) <> "]"
+formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch localBranch) (Just (Git.RemoteBranch remote branch (Just (Git.CommitsAhead commitsAhead))))))) = 
+  "[" <> (branchColour localBranch) <> " -> " <> (remoteColour remote) <> "/" <> (branchColour branch) <> "(^" <> (modifiedColour . show $ commitsAhead) <> ")]"
+formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch localBranch) (Just (Git.RemoteBranch remote branch Nothing))))) = 
+  "[" <> (branchColour localBranch) <> " -> " <> (remoteColour remote) <> "/" <> (branchColour branch) <> "]"  
 formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch branch) Nothing))) = "[" <> (branchColour branch) <> "]"
 formatGitBranch Nothing = "-"
 

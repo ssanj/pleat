@@ -26,7 +26,7 @@ unit_processGitBranchWithRemoteBranch =
                           , "alternate-exception-syntax d7a99e8 [origin/alternate-exception-syntax] Alternate Exception Syntax"
                           , "* do-something-else                     3d5ae73 [moon/do-something-else-remotely] Release 0.0.9-b01"
                           , "composite-assertions       6757633 [origin/composite-assertions] Add travis"
-                         ]) @?= Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch "do-something-else") (Just (Git.RemoteBranch "moon" "do-something-else-remotely")) ))
+                         ]) @?= Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch "do-something-else") (Just (Git.RemoteBranch "moon" "do-something-else-remotely" Nothing)) ))
 
 unit_processGitBranchWithLocalBranch :: Assertion
 unit_processGitBranchWithLocalBranch = 

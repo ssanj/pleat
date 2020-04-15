@@ -7,18 +7,22 @@ module Parser.GitParser
        ,  LocalBranch(..) 
        ,  RemoteBranch(..) 
        ,  LocalAndRemoteBranch(..) 
+       ,  CommitsAhead(..) 
           -- Functions
        ,  localBranch
        ,  remoteBranch
        ,  localAndRemoteBranch
+       ,  commitsAhead
        ) where
 
+import Text.Read (readMaybe)
 import qualified Text.Parsec as P
 
 type Parser = P.Parsec String ()
 
 newtype LocalBranch = LocalBranch String deriving stock (Eq, Show)
-data RemoteBranch = RemoteBranch { _remote :: String, _branch :: String } deriving stock (Eq, Show)
+newtype CommitsAhead = CommitsAhead Int deriving stock (Eq, Show)
+data RemoteBranch = RemoteBranch { _remote :: String, _branch :: String, _commitsAhead :: Maybe CommitsAhead } deriving stock (Eq, Show)
 
 data LocalAndRemoteBranch = LocalAndRemoteBranch { _localBranch :: LocalBranch, _remoteBranchMaybe :: Maybe RemoteBranch } deriving stock (Eq, Show)
 
@@ -46,14 +50,23 @@ parseLocalAndRemoteBranch = do
   rbMaybe <- remoteBranch
   pure $ LocalAndRemoteBranch lb rbMaybe
 
+commitsAhead :: Parser (Maybe CommitsAhead)
+commitsAhead = P.try $ do
+    _ <- P.char ':'
+    _ <- P.space
+    _ <- P.string "ahead"
+    _ <- P.space
+    cAhead <- P.manyTill P.anyChar (P.lookAhead $ P.char ']')
+    pure $ CommitsAhead <$> (readMaybe cAhead :: Maybe Int)
+
 parseRemoteBranch :: Parser RemoteBranch
 parseRemoteBranch = P.try $ do -- we need the try here because of the manyTill
     _          <- P.manyTill P.anyChar (P.lookAhead $ P.char '[')
     _          <- P.char '['
     remote     <- P.manyTill P.anyChar (P.lookAhead $ P.char '/')
     _          <- P.char '/'
-    branchName <- P.manyTill P.anyChar (P.lookAhead $ P.char ']')
-    _          <- P.char ']'
-    pure $ RemoteBranch remote branchName
+    branchName <- P.manyTill P.anyChar (P.lookAhead $ P.oneOf ":]")
+    ahead      <- commitsAhead P.<|> pure Nothing
+    pure $ RemoteBranch remote branchName ahead
 
 
