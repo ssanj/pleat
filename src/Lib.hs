@@ -7,7 +7,7 @@ import qualified Api as A
 import qualified Format.GitBranch as GF
 import qualified Format.Path      as PF
 
-import Config              (Config(..), Hostname(..), defaultMaxPathLength)
+import Config              (Config(..), Hostname(..))
 
 prompt :: Config -> IO String
 prompt config = do
@@ -44,7 +44,7 @@ prompt config = do
         )
 
 processPath :: Config -> (Maybe A.CurrentDirectory) -> String
-processPath config = PF.processPath (maybe defaultMaxPathLength id (_maxPathLength config))
+processPath = PF.processPath . _maxPathLength
 
 processHostname :: Hostname -> Maybe Hostname -> String
 processHostname actualHostname = maybe (_hostname actualHostname) _hostname 

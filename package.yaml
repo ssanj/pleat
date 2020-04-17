@@ -54,6 +54,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - pleat
+    - optparse-applicative    
 
 tests:
   pleat-test:

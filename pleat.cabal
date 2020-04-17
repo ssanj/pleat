@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a90f2f17115bff278ddd1abc876da34f99e62ec1f4fbc2c4fe9aad1ab91f2bd2
+-- hash: 3e71951865bf01c82b7d943d0689e9a06fa1e13c2a2f11721e325b814f930193
 
 name:           pleat
 version:        0.1.0.0
@@ -59,12 +59,14 @@ library
 executable pleat
   main-is: Main.hs
   other-modules:
+      CommandlineOptions
       Paths_pleat
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , optparse-applicative
     , pleat
   default-language: Haskell2010
 
