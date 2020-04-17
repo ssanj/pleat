@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Internal.BashColours
        (
           -- Functions
@@ -10,13 +12,15 @@ module Internal.BashColours
 --       with only the colours I use. It could be generalised
 --       more.
 
-cyan :: String -> String
+import Data.String (IsString(..))
+
+cyan :: (IsString a, Semigroup a) => a -> a
 cyan = setColour cyanColour
 
-red :: String -> String
+red :: (IsString a, Semigroup a) => a -> a
 red = setColour redColour
 
-yellow :: String -> String
+yellow :: (IsString a, Semigroup a) => a -> a
 yellow = setColour yellowColour
 
 cyanColour, redColour, yellowColour :: Int
@@ -25,7 +29,7 @@ cyanColour   = 96
 redColour    = 31
 yellowColour = 33
 
-setColour :: Int -> String -> String
+setColour :: (IsString a, Semigroup a) => Int -> a -> a
 setColour code value
-  | code > 0 = "\\[\\e[" <> (show code) <> "m\\]" <> value <> "\\[\\e[0m\\]"
+  | code > 0 = (fromString $ "\\[\\e[" <> (show code) <> "m\\]") <> value <> (fromString "\\[\\e[0m\\]")
   | otherwise = value

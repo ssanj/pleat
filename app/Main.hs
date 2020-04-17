@@ -6,4 +6,4 @@ import Config (Config(..))
 import CommandlineOptions (pleatInfo)
 
 main :: IO ()
-main = execParser pleatInfo >>= prompt >>= putStrLn  --prompt defaultConfig >>= putStrLn
+main = execParser pleatInfo >>= prompt >>= putStrLn
