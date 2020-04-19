@@ -4,29 +4,25 @@ module Config
        (
            -- Data Types
            Config(..)
-        ,  Hostname(..)
         ,  MaxPathLength(..)
+        ,  PleatOption(..)
+        ,  HostnameOption(..)
+        ,  Hostname(..)        
            -- Functions
-        ,  defaultConfig
         ,  defaultMaxPathLength
         ) where
 
+data PleatOption a = OptionOff | OptionOn a deriving stock (Eq, Show)
 
+data HostnameOption = HostnameOption { _overrideHostname ::  Maybe Hostname } deriving stock (Eq, Show)
 newtype Hostname = Hostname { _hostname :: String } deriving stock (Eq, Show)
 
 data Config = Config { 
-   _overrideHostname :: Maybe Hostname 
+   _pleatHostnameOption :: PleatOption HostnameOption
 ,  _maxPathLength :: MaxPathLength 
 } deriving stock (Eq, Show)
 
 newtype MaxPathLength = MaxPathLength { _pathLength :: Int } deriving stock (Eq, Show)
-
-defaultConfig :: Config
-defaultConfig =
-  Config {
-     _overrideHostname = Just $ Hostname "mbp"
-  ,  _maxPathLength = defaultMaxPathLength
-  }
 
 defaultMaxPathLength :: MaxPathLength
 defaultMaxPathLength = MaxPathLength 50

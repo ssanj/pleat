@@ -7,15 +7,16 @@ import qualified Api as A
 import qualified Format.GitBranch as GF
 import qualified Format.Path      as PF
 
-import Config              (Config(..), Hostname(..))
+import Config
 
 prompt :: Config -> IO String
 prompt config = do
-  localTime    <- processTime      <$> A.getLocalTime
-  user         <- processUser      <$> A.getUser
-  hostname     <- (processHostname <$> A.getHostname) <*> pure (_overrideHostname config)
-  path         <- (processPath config)   <$> A.getCurrentDirectory
-  isGitRepo    <- A.isGitRepo
+  localTime     <- processTime      <$> A.getLocalTime
+  user          <- processUser      <$> A.getUser
+  hostnameMaybe <- processHostname config -- (processHostname <$> A.getHostname) <*> pure (_overrideHostname config)
+  let hostname  = maybe "" ("@" <> ) hostnameMaybe
+  path          <- (processPath config)   <$> A.getCurrentDirectory
+  isGitRepo     <- A.isGitRepo
   case isGitRepo of
     Just True -> do
       (branch, modified) <- processGitRepo
@@ -23,8 +24,7 @@ prompt config = do
               localTime <> 
               ":"       <> 
               user      <> 
-              "@"       <> 
-              hostname  <> 
+              hostname  <>
               ":"       <> 
               path      <>
               ":"       <>
@@ -46,8 +46,13 @@ prompt config = do
 processPath :: Config -> (Maybe A.CurrentDirectory) -> String
 processPath = PF.processPath . _maxPathLength
 
-processHostname :: Hostname -> Maybe Hostname -> String
-processHostname actualHostname = maybe (_hostname actualHostname) _hostname 
+processHostname :: Config -> IO (Maybe String)
+processHostname Config {_pleatHostnameOption = OptionOn (HostnameOption (Just (Hostname hostnameOverride))), _maxPathLength = _} = pure $ Just hostnameOverride
+processHostname Config {_pleatHostnameOption = OptionOn (HostnameOption Nothing),  _maxPathLength = _}                           = Just . _hostname <$> A.getHostname
+processHostname Config {_pleatHostnameOption = OptionOff, _maxPathLength =_}                                                     = pure Nothing
+
+-- processHostname :: Hostname -> Maybe Hostname -> String
+-- processHostname actualHostname = maybe (_hostname actualHostname) _hostname 
 
 processGitRepo :: IO (String, String)
 processGitRepo = do

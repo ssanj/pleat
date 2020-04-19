@@ -10,12 +10,27 @@ pleatInfo =
   info (parseConfig <**> helper) (
     fullDesc <>
     progDesc "writes out a bash prompt with useful information" <>
-    header "pleat - bash prompt"
+    header "pleat - bash prompt" <>
+    footer "--no options take precedence over other options"
   )
 
 parseConfig :: Parser Config
 parseConfig = 
-  Config <$> parseHostname <*> parseMaxPathLength
+  Config <$> parsePleatHostnameOption <*> parseMaxPathLength
+
+parseHostnameEnabled :: Parser Bool
+parseHostnameEnabled = 
+  flag False True (
+    long "no-hostname" <>
+    help "turn off hostname display"
+  )
+
+parsePleatHostnameOption :: Parser (PleatOption HostnameOption)
+parsePleatHostnameOption = liftA2 handlePleatDisableOption parseHostnameEnabled (HostnameOption <$> parseHostname) 
+
+handlePleatDisableOption :: Bool -> a -> PleatOption a
+handlePleatDisableOption False = OptionOn
+handlePleatDisableOption True  = const OptionOff
 
 parseHostname :: Parser (Maybe Hostname)
 parseHostname = 
