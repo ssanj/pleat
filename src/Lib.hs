@@ -16,9 +16,9 @@ prompt config = do
   hostnameMaybe <- processHostname config -- (processHostname <$> A.getHostname) <*> pure (_overrideHostname config)
   let hostname  = maybe "" ("@" <> ) hostnameMaybe
   path          <- (processPath config)   <$> A.getCurrentDirectory
-  isGitRepo     <- A.isGitRepo
+  isGitRepo     <- (enableGitRepo config) <$> A.isGitRepo
   case isGitRepo of
-    Just True -> do
+    True -> do
       (branch, modified) <- processGitRepo
       pure (
               localTime <> 
@@ -47,12 +47,14 @@ processPath :: Config -> (Maybe A.CurrentDirectory) -> String
 processPath = PF.processPath . _maxPathLength
 
 processHostname :: Config -> IO (Maybe String)
-processHostname Config {_pleatHostnameOption = OptionOn (HostnameOption (Just (Hostname hostnameOverride))), _maxPathLength = _} = pure $ Just hostnameOverride
-processHostname Config {_pleatHostnameOption = OptionOn (HostnameOption Nothing),  _maxPathLength = _}                           = Just . _hostname <$> A.getHostname
-processHostname Config {_pleatHostnameOption = OptionOff, _maxPathLength =_}                                                     = pure Nothing
+processHostname Config { _pleatHostnameOption = OptionOn (HostnameOption (Just (Hostname hostnameOverride))) } = pure $ Just hostnameOverride
+processHostname Config { _pleatHostnameOption = OptionOn (HostnameOption Nothing) }                            = Just . _hostname <$> A.getHostname
+processHostname Config { _pleatHostnameOption = OptionOff }                                                    = pure Nothing
 
--- processHostname :: Hostname -> Maybe Hostname -> String
--- processHostname actualHostname = maybe (_hostname actualHostname) _hostname 
+enableGitRepo :: Config -> (Maybe Bool) -> Bool
+enableGitRepo Config {_pleatGitOption = OptionOn GitOption } hasGitDir = maybe False id hasGitDir
+enableGitRepo Config {_pleatGitOption = OptionOff }                  _ = False
+
 
 processGitRepo :: IO (String, String)
 processGitRepo = do

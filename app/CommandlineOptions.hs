@@ -16,14 +16,23 @@ pleatInfo =
 
 parseConfig :: Parser Config
 parseConfig = 
-  Config <$> parsePleatHostnameOption <*> parseMaxPathLength
+  Config <$> parsePleatHostnameOption <*> parseMaxPathLength <*> parseGitOption
 
 parseHostnameEnabled :: Parser Bool
-parseHostnameEnabled = 
+parseHostnameEnabled = parseBooleanOption "hostname"
+
+parseGitEnabled :: Parser Bool
+parseGitEnabled = parseBooleanOption "git"
+
+parseBooleanOption :: String -> Parser Bool
+parseBooleanOption optionName = 
   flag False True (
-    long "no-hostname" <>
-    help "turn off hostname display"
+    long ("no-" <> optionName) <>
+    help ("turn off " <> optionName <> " display")
   )
+
+parseGitOption :: Parser (PleatOption GitOption)
+parseGitOption = liftA2 handlePleatDisableOption parseGitEnabled (pure GitOption)
 
 parsePleatHostnameOption :: Parser (PleatOption HostnameOption)
 parsePleatHostnameOption = liftA2 handlePleatDisableOption parseHostnameEnabled (HostnameOption <$> parseHostname) 
