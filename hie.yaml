@@ -1,0 +1,10 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "pleat:lib"
+    - path: "./app"
+      component: "pleat:exe:pleat"
+    - path: "./test"
+      component: "pleat:test:pleat-test"
+
+
