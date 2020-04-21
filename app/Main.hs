@@ -1,9 +1,7 @@
 module Main where
 
 import Lib (prompt)
-import Options.Applicative (execParser)
-import Config (Config(..))
-import CommandlineOptions (pleatInfo)
+import Commandline.CommandlineOptions (parseArguments)
 
 main :: IO ()
-main = execParser pleatInfo >>= prompt >>= putStrLn
+main = parseArguments >>= prompt >>= putStrLn

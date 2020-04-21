@@ -32,6 +32,7 @@ library:
   - old-locale
   - parsec
   - hostname
+  - optparse-applicative    
 
   ghc-options:
   - -Weverything
@@ -54,7 +55,6 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - pleat
-    - optparse-applicative    
 
 tests:
   pleat-test:

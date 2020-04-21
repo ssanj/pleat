@@ -1,9 +1,26 @@
-module CommandlineOptions (pleatInfo) where
+module Commandline.CommandlineOptions 
+      (
+         -- Functions
+         pleatInfo
+      ,  parseConfig
+      ,  parseHostnameEnabled
+      ,  parseGitEnabled
+      ,  parseBooleanOption
+      ,  parseGitOption
+      ,  parsePleatHostnameOption
+      ,  handlePleatDisableOption
+      ,  parseHostname
+      ,  parseMaxPathLength
+      ,  parseArguments
+      ) where
 
 import Options.Applicative
 import Config
 
 import Data.Semigroup ((<>))
+
+parseArguments :: IO Config
+parseArguments = execParser pleatInfo
 
 pleatInfo :: ParserInfo Config
 pleatInfo = 
