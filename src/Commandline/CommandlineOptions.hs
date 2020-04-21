@@ -3,8 +3,8 @@ module Commandline.CommandlineOptions
          -- Functions
          pleatInfo
       ,  parseConfig
-      ,  parseHostnameEnabled
-      ,  parseGitEnabled
+      ,  parseHostnameDisabled
+      ,  parseGitDisabled
       ,  parseBooleanOption
       ,  parseGitOption
       ,  parsePleatHostnameOption
@@ -35,12 +35,13 @@ parseConfig :: Parser Config
 parseConfig = 
   Config <$> parsePleatHostnameOption <*> parseMaxPathLength <*> parseGitOption
 
-parseHostnameEnabled :: Parser Bool
-parseHostnameEnabled = parseBooleanOption "hostname"
+parseHostnameDisabled :: Parser Bool
+parseHostnameDisabled = parseBooleanOption "hostname"
 
-parseGitEnabled :: Parser Bool
-parseGitEnabled = parseBooleanOption "git"
+parseGitDisabled :: Parser Bool
+parseGitDisabled = parseBooleanOption "git"
 
+-- TODO: Boolean blindness
 parseBooleanOption :: String -> Parser Bool
 parseBooleanOption optionName = 
   flag False True (
@@ -49,10 +50,10 @@ parseBooleanOption optionName =
   )
 
 parseGitOption :: Parser (PleatOption GitOption)
-parseGitOption = liftA2 handlePleatDisableOption parseGitEnabled (pure GitOption)
+parseGitOption = liftA2 handlePleatDisableOption parseGitDisabled (pure GitOption)
 
 parsePleatHostnameOption :: Parser (PleatOption HostnameOption)
-parsePleatHostnameOption = liftA2 handlePleatDisableOption parseHostnameEnabled (HostnameOption <$> parseHostname) 
+parsePleatHostnameOption = liftA2 handlePleatDisableOption parseHostnameDisabled (HostnameOption <$> parseHostname) 
 
 handlePleatDisableOption :: Bool -> a -> PleatOption a
 handlePleatDisableOption False = OptionOn

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c8cdba1335c1c8312d7fb1a327aadc4f7dbc202b04f39012badd0a6ee0974838
+-- hash: 89266849113a7867636d16f38290b17c6aacb3c03e537fdbd95aeca47af3c1ab
 
 name:           pleat
 version:        0.1.0.0
@@ -74,6 +74,7 @@ test-suite pleat-test
   type: exitcode-stdio-1.0
   main-is: Driver.hs
   other-modules:
+      Commandline.CommandlineOptionsSpec
       Format.GitBranchSpec
       Parser.GitParserSpec
       Paths_pleat
@@ -82,6 +83,7 @@ test-suite pleat-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , optparse-applicative
     , parsec
     , pleat
     , tasty
