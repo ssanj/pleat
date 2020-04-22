@@ -21,27 +21,29 @@ unit_parsesMaxPathLengthWithDefault :: Assertion
 unit_parsesMaxPathLengthWithDefault = runParser parseMaxPathLength [] defaultMaxPathLength
 
 unit_parseHostnameDisabledWithDisabledFlag :: Assertion
-unit_parseHostnameDisabledWithDisabledFlag = runParser parseHostnameDisabled ["--no-hostname"] True
+unit_parseHostnameDisabledWithDisabledFlag = runParser parseHostnameDisabled ["--no-hostname"] Disabled
 
 unit_parseHostnameDisabledWithoutDisabledFlag :: Assertion
-unit_parseHostnameDisabledWithoutDisabledFlag = runParser parseHostnameDisabled [] False
+unit_parseHostnameDisabledWithoutDisabledFlag = runParser parseHostnameDisabled [] Enabled
 
 unit_parseGitDisabledWithDisabledFlag :: Assertion
-unit_parseGitDisabledWithDisabledFlag = runParser parseGitDisabled ["--no-git"] True
+unit_parseGitDisabledWithDisabledFlag = runParser parseGitDisabled ["--no-git"] Disabled
 
--- why does this throw a ParseFailure instead of returning False?
 unit_parseGitDisabledWithoutDisabledFlag :: Assertion
-unit_parseGitDisabledWithoutDisabledFlag = runParser parseGitDisabled [] False
+unit_parseGitDisabledWithoutDisabledFlag = runParser parseGitDisabled [] Enabled
 
--- TODO: handlePleatDisableOption could be PBT tests
+-- TODO: handlePleatDisableOption could be PBT tests  
 unit_handlePleatDisableOptionWithDisabled :: Assertion
-unit_handlePleatDisableOptionWithDisabled = handlePleatDisableOption True "test" @?= OptionOff
+unit_handlePleatDisableOptionWithDisabled = optionStatusToPleatOption Disabled "test" @?= OptionOff
 
-unit_handlePleatDisableOptionWithenabled :: Assertion
-unit_handlePleatDisableOptionWithenabled = handlePleatDisableOption False "test" @?= (OptionOn "test")
+unit_optionStatusToPleatOptionWithEnabled :: Assertion
+unit_optionStatusToPleatOptionWithEnabled = optionStatusToPleatOption Enabled "test" @?= (OptionOn "test")
 
-unit_parseBooleanOptionWithFlag :: Assertion
-unit_parseBooleanOptionWithFlag = runParser (parseBooleanOption "whatever") [] False
+unit_parseOptionStatusWithoutDisabledFlag :: Assertion
+unit_parseOptionStatusWithoutDisabledFlag = runParser (parseOptionStatus "whatever") [] Enabled
+
+unit_parseOptionStatusWithDisabledFlag :: Assertion
+unit_parseOptionStatusWithDisabledFlag = runParser (parseOptionStatus "whatever") ["--no-whatever"] Disabled
 
 unit_parseConfig :: Assertion
 unit_parseConfig = runParser (parseConfig) [] $ 

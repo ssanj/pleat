@@ -1,14 +1,18 @@
+{-# LANGUAGE DerivingStrategies #-}
+
 module Commandline.CommandlineOptions 
       (
+         -- Data types
+         OptionStatus(..)
          -- Functions
-         pleatInfo
+      ,  pleatInfo
       ,  parseConfig
       ,  parseHostnameDisabled
       ,  parseGitDisabled
-      ,  parseBooleanOption
+      ,  parseOptionStatus
       ,  parseGitOption
       ,  parsePleatHostnameOption
-      ,  handlePleatDisableOption
+      ,  optionStatusToPleatOption
       ,  parseHostname
       ,  parseMaxPathLength
       ,  parseArguments
@@ -18,6 +22,8 @@ import Options.Applicative
 import Config
 
 import Data.Semigroup ((<>))
+
+data OptionStatus = Enabled | Disabled deriving stock (Eq, Show)
 
 parseArguments :: IO Config
 parseArguments = execParser pleatInfo
@@ -35,29 +41,28 @@ parseConfig :: Parser Config
 parseConfig = 
   Config <$> parsePleatHostnameOption <*> parseMaxPathLength <*> parseGitOption
 
-parseHostnameDisabled :: Parser Bool
-parseHostnameDisabled = parseBooleanOption "hostname"
+parseHostnameDisabled :: Parser OptionStatus
+parseHostnameDisabled = parseOptionStatus "hostname"
 
-parseGitDisabled :: Parser Bool
-parseGitDisabled = parseBooleanOption "git"
+parseGitDisabled :: Parser OptionStatus
+parseGitDisabled = parseOptionStatus "git"
 
--- TODO: Boolean blindness
-parseBooleanOption :: String -> Parser Bool
-parseBooleanOption optionName = 
-  flag False True (
+parseOptionStatus :: String -> Parser OptionStatus
+parseOptionStatus optionName = 
+  flag Enabled Disabled (
     long ("no-" <> optionName) <>
     help ("turn off " <> optionName <> " display")
   )
 
 parseGitOption :: Parser (PleatOption GitOption)
-parseGitOption = liftA2 handlePleatDisableOption parseGitDisabled (pure GitOption)
+parseGitOption = liftA2 optionStatusToPleatOption parseGitDisabled (pure GitOption)
 
 parsePleatHostnameOption :: Parser (PleatOption HostnameOption)
-parsePleatHostnameOption = liftA2 handlePleatDisableOption parseHostnameDisabled (HostnameOption <$> parseHostname) 
+parsePleatHostnameOption = liftA2 optionStatusToPleatOption parseHostnameDisabled (HostnameOption <$> parseHostname) 
 
-handlePleatDisableOption :: Bool -> a -> PleatOption a
-handlePleatDisableOption False = OptionOn
-handlePleatDisableOption True  = const OptionOff
+optionStatusToPleatOption :: OptionStatus -> a -> PleatOption a
+optionStatusToPleatOption Enabled  = OptionOn
+optionStatusToPleatOption Disabled = const OptionOff
 
 parseHostname :: Parser (Maybe Hostname)
 parseHostname = 
