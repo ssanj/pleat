@@ -24,6 +24,7 @@ dependencies:
 
 library:
   source-dirs: src
+
   dependencies:
   - process
   - text
@@ -35,6 +36,7 @@ library:
   - optparse-applicative    
 
   ghc-options:
+  - -Werror
   - -Weverything
   - -fprint-potential-instances
   - -fprint-expanded-synonyms
@@ -49,21 +51,26 @@ executables:
   pleat:
     main:                Main.hs
     source-dirs:         app
+    
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    
     dependencies:
     - pleat
+    
 
 tests:
   pleat-test:
     main:                Driver.hs
     source-dirs:         test
+    
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    
     dependencies:
     - pleat
     - tasty
@@ -71,3 +78,6 @@ tests:
     - tasty-hunit
     - parsec
     - optparse-applicative
+  
+    ghc-options:
+    - -Wno-missing-export-lists    

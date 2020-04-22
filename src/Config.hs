@@ -9,6 +9,7 @@ module Config
         ,  HostnameOption(..)
         ,  Hostname(..)        
         ,  GitOption(..)        
+        ,  TimestampOption(..)        
            -- Functions
         ,  defaultMaxPathLength
         ) where
@@ -19,11 +20,13 @@ data HostnameOption = HostnameOption { _overrideHostname ::  Maybe Hostname } de
 newtype Hostname = Hostname { _hostname :: String } deriving stock (Eq, Show)
 
 data GitOption = GitOption deriving stock (Eq, Show)
+data TimestampOption = TimestampOption deriving stock (Eq, Show)
 
 data Config = Config { 
    _pleatHostnameOption :: PleatOption HostnameOption
 ,  _maxPathLength :: MaxPathLength 
 ,  _pleatGitOption :: PleatOption GitOption
+,  _pleatTimestampOption :: PleatOption TimestampOption
 } deriving stock (Eq, Show)
 
 newtype MaxPathLength = MaxPathLength { _pathLength :: Int } deriving stock (Eq, Show)

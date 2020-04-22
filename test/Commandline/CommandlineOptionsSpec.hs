@@ -1,7 +1,5 @@
 module Commandline.CommandlineOptionsSpec where
 
-import Test.Tasty                      (TestTree)
-import Test.Tasty                      (testGroup)
 import Test.Tasty.HUnit                (assertFailure, (@?=), Assertion)
 import Data.Semigroup                  ((<>))
 
@@ -32,6 +30,9 @@ unit_parseGitDisabledWithDisabledFlag = runParser parseGitDisabled ["--no-git"] 
 unit_parseGitDisabledWithoutDisabledFlag :: Assertion
 unit_parseGitDisabledWithoutDisabledFlag = runParser parseGitDisabled [] Enabled
 
+unit_parseTimestampDisabledWithDisabledFlag :: Assertion
+unit_parseTimestampDisabledWithDisabledFlag = runParser parseTimestampDisabled ["--no-timestamp"] Disabled
+
 -- TODO: handlePleatDisableOption could be PBT tests  
 unit_handlePleatDisableOptionWithDisabled :: Assertion
 unit_handlePleatDisableOptionWithDisabled = optionStatusToPleatOption Disabled "test" @?= OptionOff
@@ -51,6 +52,7 @@ unit_parseConfig = runParser (parseConfig) [] $
             _pleatHostnameOption = OptionOn $ HostnameOption Nothing
          ,  _maxPathLength       = defaultMaxPathLength
          , _pleatGitOption       = OptionOn GitOption
+         , _pleatTimestampOption = OptionOn TimestampOption
          }
 
 -- TODO: how can I test the various Info options for the Parser like long, help and metavar
@@ -66,4 +68,4 @@ xrunParserWithFailure parserA args =
   let result = execParserPure defaultPrefs (info parserA $ header "some-header") args
   in case result of
       (Success actual) -> assertFailure $ "got success but expected an error: " <> (show actual)
-      other            -> pure ()
+      _            -> pure ()

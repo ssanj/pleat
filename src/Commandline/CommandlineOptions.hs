@@ -9,6 +9,7 @@ module Commandline.CommandlineOptions
       ,  parseConfig
       ,  parseHostnameDisabled
       ,  parseGitDisabled
+      ,  parseTimestampDisabled
       ,  parseOptionStatus
       ,  parseGitOption
       ,  parsePleatHostnameOption
@@ -39,13 +40,16 @@ pleatInfo =
 
 parseConfig :: Parser Config
 parseConfig = 
-  Config <$> parsePleatHostnameOption <*> parseMaxPathLength <*> parseGitOption
+  Config <$> parsePleatHostnameOption <*> parseMaxPathLength <*> parseGitOption <*> parseTimestampOption
 
 parseHostnameDisabled :: Parser OptionStatus
 parseHostnameDisabled = parseOptionStatus "hostname"
 
 parseGitDisabled :: Parser OptionStatus
 parseGitDisabled = parseOptionStatus "git"
+
+parseTimestampDisabled :: Parser OptionStatus
+parseTimestampDisabled = parseOptionStatus "timestamp"
 
 parseOptionStatus :: String -> Parser OptionStatus
 parseOptionStatus optionName = 
@@ -56,6 +60,9 @@ parseOptionStatus optionName =
 
 parseGitOption :: Parser (PleatOption GitOption)
 parseGitOption = liftA2 optionStatusToPleatOption parseGitDisabled (pure GitOption)
+
+parseTimestampOption :: Parser (PleatOption TimestampOption)
+parseTimestampOption = liftA2 optionStatusToPleatOption parseTimestampDisabled (pure TimestampOption)
 
 parsePleatHostnameOption :: Parser (PleatOption HostnameOption)
 parsePleatHostnameOption = liftA2 optionStatusToPleatOption parseHostnameDisabled (HostnameOption <$> parseHostname) 

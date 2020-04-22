@@ -11,18 +11,16 @@ import Config
 
 prompt :: Config -> IO String
 prompt config = do
-  localTime     <- processTime      <$> A.getLocalTime
-  user          <- processUser      <$> A.getUser
-  hostnameMaybe <- processHostname config -- (processHostname <$> A.getHostname) <*> pure (_overrideHostname config)
-  let hostname  = maybe "" ("@" <> ) hostnameMaybe
-  path          <- (processPath config)   <$> A.getCurrentDirectory
-  isGitRepo     <- (enableGitRepo config) <$> A.isGitRepo
+  localTime  <- processTimestamp config
+  user       <- processUser            <$> A.getUser
+  hostname   <- processHostname config
+  path       <- (processPath config)   <$> A.getCurrentDirectory
+  isGitRepo  <- (enableGitRepo config) <$> A.isGitRepo
   case isGitRepo of
     True -> do
       (branch, modified) <- processGitRepo
       pure (
-              localTime <> 
-              ":"       <> 
+              localTime <>
               user      <> 
               hostname  <>
               ":"       <> 
@@ -34,8 +32,7 @@ prompt config = do
             )
     _         -> 
       pure (
-              localTime <> 
-              ":"       <> 
+              localTime <>
               user      <> 
               hostname  <> 
               ":"       <> 
@@ -46,10 +43,20 @@ prompt config = do
 processPath :: Config -> (Maybe A.CurrentDirectory) -> String
 processPath = PF.processPath . _maxPathLength
 
-processHostname :: Config -> IO (Maybe String)
-processHostname Config { _pleatHostnameOption = OptionOn (HostnameOption (Just (Hostname hostnameOverride))) } = pure $ Just hostnameOverride
-processHostname Config { _pleatHostnameOption = OptionOn (HostnameOption Nothing) }                            = Just . _hostname <$> A.getHostname
-processHostname Config { _pleatHostnameOption = OptionOff }                                                    = pure Nothing
+processTimestamp :: Config -> IO String
+processTimestamp config = 
+  let localTimeMaybe = case config of
+                        Config { _pleatTimestampOption = OptionOn TimestampOption } -> Just . processTime <$> A.getLocalTime
+                        Config { _pleatTimestampOption = OptionOff }                -> pure Nothing
+  in fmap (maybe "" (<> ":")) localTimeMaybe
+
+processHostname :: Config -> IO String
+processHostname config =
+  let hostnameMaybe = case config of
+                        Config { _pleatHostnameOption = OptionOn (HostnameOption (Just (Hostname hostnameOverride))) } -> pure $ Just hostnameOverride
+                        Config { _pleatHostnameOption = OptionOn (HostnameOption Nothing) }                            -> Just . _hostname <$> A.getHostname
+                        Config { _pleatHostnameOption = OptionOff }                                                    -> pure Nothing
+  in fmap (maybe "" ("@" <> )) hostnameMaybe
 
 enableGitRepo :: Config -> (Maybe Bool) -> Bool
 enableGitRepo Config {_pleatGitOption = OptionOn GitOption } hasGitDir = maybe False id hasGitDir
