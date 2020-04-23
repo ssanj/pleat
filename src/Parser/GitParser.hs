@@ -8,6 +8,7 @@ module Parser.GitParser
        ,  RemoteBranch(..) 
        ,  LocalAndRemoteBranch(..) 
        ,  CommitsAhead(..) 
+       ,  GitHash(..) 
           -- Functions
        ,  localBranch
        ,  remoteBranch
@@ -20,7 +21,8 @@ import qualified Text.Parsec as P
 
 type Parser = P.Parsec String ()
 
-newtype LocalBranch = LocalBranch String deriving stock (Eq, Show)
+newtype GitHash = GitHash String deriving stock (Eq, Show)
+data LocalBranch = LocalBranch { _local :: String, _hash :: GitHash} deriving stock (Eq, Show)
 newtype CommitsAhead = CommitsAhead Int deriving stock (Eq, Show)
 data RemoteBranch = RemoteBranch { _remote :: String, _branch :: String, _commitsAhead :: Maybe CommitsAhead } deriving stock (Eq, Show)
 
@@ -32,10 +34,12 @@ localBranch = (fmap Just parseLocalBranch) P.<|> (pure Nothing)
 
 parseLocalBranch :: Parser LocalBranch
 parseLocalBranch = P.try $ do
-  _ <- P.char '*'
-  _ <- P.space
-  branchName <- P.many1 $ P.noneOf "^~ \\"
-  pure $ LocalBranch branchName
+  _          <- P.char '*'
+  _          <- P.space
+  branchName <- P.try $ P.many1 $ P.noneOf "^~ \\"
+  _          <- P.space
+  hash       <- P.try $ P.many1 $ P.noneOf "^~ \\"
+  pure $ LocalBranch branchName (GitHash hash)
 
 -- * master b7fd5fb0 [origin/master] Merge pull request #1715 from jneira/fix-install-hoogle
 remoteBranch :: Parser (Maybe RemoteBranch)

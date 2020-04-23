@@ -3,16 +3,20 @@
 module Parser.GitParserSpec where
 
 import Test.Tasty.HUnit                (Assertion, assertFailure, (@?=))
-import Parser.GitParser                (LocalBranch(..), RemoteBranch(..), LocalAndRemoteBranch(..), CommitsAhead(..), localBranch, remoteBranch, localAndRemoteBranch, commitsAhead)
 import Text.Parsec                     (parse, option)
+
+import Parser.GitParser
 
 unit_parseWithLocalBranch :: Assertion
 unit_parseWithLocalBranch =
   let parseResult = parse localBranch "" "* master b93b0b7 More WIP" in
   either (assertFailure . show) (\lbranch -> 
                                     case lbranch of 
-                                      Just (LocalBranch branchName) -> branchName @?= "master"
-                                      Nothing                       -> assertFailure "Local branch not found"
+                                      Just (LocalBranch branchName (GitHash hash)) -> 
+                                        do 
+                                          branchName @?= "master"
+                                          hash       @?= "b93b0b7"
+                                      Nothing                                      -> assertFailure "Local branch not found"
                                 ) parseResult
 
 unit_parseWithoutActiveBranch :: Assertion
@@ -20,8 +24,8 @@ unit_parseWithoutActiveBranch =
   let parseResult = parse localBranch "" "Merge pull request #1715" in
   either (assertFailure . show) (\lbranch -> 
                                     case lbranch of 
-                                      Just (LocalBranch branchName) -> assertFailure $ "expected no remote branch but got: " <> branchName
-                                      Nothing                       -> pure ()
+                                      Just lb@(LocalBranch _ _) -> assertFailure $ "expected no remote branch but got: " <> (show lb)
+                                      Nothing                   -> pure ()
                                 ) parseResult
 
 unit_parseWithRemoteBranch :: Assertion
@@ -63,7 +67,7 @@ unit_parseWithLocalAndRemoteBranch =
   let parseResult = parse localAndRemoteBranch "" "* slave b7fd5fb0 [origin/master] Merge pull request #1715 from jneira/fix-install-hoogle" in
   either (assertFailure . show) (\rBranch -> 
                                     case rBranch of 
-                                      Just (LocalAndRemoteBranch (LocalBranch localBranchName) (Just (RemoteBranch remote remoteBranchName ahead))) -> 
+                                      Just (LocalAndRemoteBranch (LocalBranch localBranchName _) (Just (RemoteBranch remote remoteBranchName ahead))) -> 
                                         do 
                                           localBranchName  @?= "slave"
                                           remote           @?= "origin" 
@@ -78,7 +82,7 @@ unit_parseWithLocalAndRemoteBranchWithoutRemoteBranch =
   let parseResult = parse localAndRemoteBranch "" "* master b7fd5fb0 Merge pull request #1715 from jneira/fix-install-hoogle" in
   either (assertFailure . show) (\rBranch -> 
                                     case rBranch of 
-                                      Just (LocalAndRemoteBranch (LocalBranch localBranchName) rb) -> 
+                                      Just (LocalAndRemoteBranch (LocalBranch localBranchName _) rb) -> 
                                         do 
                                           localBranchName  @?= "master"
                                           rb               @?= Nothing
@@ -99,7 +103,6 @@ unit_parseWithCommitsAhead =
                                       Nothing                     -> assertFailure "Could not parse CommitsAhead"
                                 ) parseResult
 
-
 unit_parseWithoutCommitsAhead :: Assertion
 unit_parseWithoutCommitsAhead = 
   let parseResult = parse (option Nothing commitsAhead) "" "b7fd5fb0" in
@@ -108,4 +111,3 @@ unit_parseWithoutCommitsAhead =
                                       Just (CommitsAhead commits) -> assertFailure $ "Expect no commits ahead but got: " <> (show commits)
                                       Nothing                     -> pure ()
                                 ) parseResult
-
