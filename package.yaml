@@ -80,4 +80,10 @@ tests:
     - optparse-applicative
   
     ghc-options:
-    - -Wno-missing-export-lists    
+    - -Werror
+    - -Weverything      
+    - -Wno-unsafe
+    - -Wno-safe
+    - -Wno-implicit-prelude
+    - -Wno-missing-import-lists
+    - -Wno-missing-export-lists

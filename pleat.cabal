@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 28b5e9292afa3c4ed591e578ebf495f0a049cc47aea057b1531474f9bc3ef857
+-- hash: 290c562089b1198b7fa61b3d8a16682c86c8fc229457be07b07f0f9bf187f239
 
 name:           pleat
 version:        0.1.0.0
@@ -80,7 +80,7 @@ test-suite pleat-test
       Paths_pleat
   hs-source-dirs:
       test
-  ghc-options: -Wno-missing-export-lists
+  ghc-options: -Werror -Weverything -Wno-unsafe -Wno-safe -Wno-implicit-prelude -Wno-missing-import-lists -Wno-missing-export-lists
   build-depends:
       base >=4.7 && <5
     , optparse-applicative

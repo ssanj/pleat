@@ -4,11 +4,7 @@ module Format.GitBranchSpec where
 
 import qualified Parser.GitParser as Git
 
-import Test.Tasty                      (TestTree)
-import Test.Tasty                      (testGroup)
-import Test.Tasty.HUnit                (assertFailure, testCase, (@?=), Assertion)
-import Data.Functor.Identity           (Identity)
-import Text.Parsec                     (parse)
+import Test.Tasty.HUnit                ((@?=), Assertion)
 
 import Format.GitBranch
 

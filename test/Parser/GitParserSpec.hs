@@ -2,9 +2,7 @@
 
 module Parser.GitParserSpec where
 
-import Test.Tasty                      (TestTree, testGroup)
-import Test.Tasty.HUnit                (Assertion, assertFailure, testCase, (@?=))
-import Data.Functor.Identity           (Identity)
+import Test.Tasty.HUnit                (Assertion, assertFailure, (@?=))
 import Parser.GitParser                (LocalBranch(..), RemoteBranch(..), LocalAndRemoteBranch(..), CommitsAhead(..), localBranch, remoteBranch, localAndRemoteBranch, commitsAhead)
 import Text.Parsec                     (parse, option)
 
@@ -31,11 +29,11 @@ unit_parseWithRemoteBranch =
   let parseResult = parse remoteBranch "" "* master b7fd5fb0 [origin/master] Merge pull request #1715 from jneira/fix-install-hoogle" in
   either (assertFailure . show) (\rBranch -> 
                                     case rBranch of 
-                                      Just (RemoteBranch remote branchName Nothing) -> 
+                                      Just (RemoteBranch remote branchName _) -> 
                                         do 
                                           remote     @?= "origin" 
                                           branchName @?= "master"
-                                      Nothing                        -> assertFailure "Remote branch not found"
+                                      Nothing                                 -> assertFailure "Remote branch not found"
                                 ) parseResult
 
 unit_parseWithRemoteBranchAndUnpushedUpdates :: Assertion
@@ -71,7 +69,8 @@ unit_parseWithLocalAndRemoteBranch =
                                           remote           @?= "origin" 
                                           remoteBranchName @?= "master"
                                           ahead            @?= Nothing
-                                      Nothing                        -> assertFailure "Could not parse both Local and Remote branches as LocalAndRemoteBranch"
+                                      Just other -> assertFailure $ "Could not parse both Local and Remote branches as LocalAndRemoteBranch: " <> (show other)
+                                      Nothing    -> assertFailure "Could not parse both Local and Remote branches as LocalAndRemoteBranch"
                                 ) parseResult
 
 unit_parseWithLocalAndRemoteBranchWithoutRemoteBranch :: Assertion

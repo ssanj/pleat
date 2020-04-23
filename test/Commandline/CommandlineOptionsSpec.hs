@@ -46,6 +46,9 @@ unit_parseOptionStatusWithoutDisabledFlag = runParser (parseOptionStatus "whatev
 unit_parseOptionStatusWithDisabledFlag :: Assertion
 unit_parseOptionStatusWithDisabledFlag = runParser (parseOptionStatus "whatever") ["--no-whatever"] Disabled
 
+unit_parsePrompt :: Assertion
+unit_parsePrompt = runParser parsePrompt ["--prompt", "|> "] (Prompt "|> ")
+
 unit_parseConfig :: Assertion
 unit_parseConfig = runParser (parseConfig) [] $ 
   Config { 
@@ -53,6 +56,7 @@ unit_parseConfig = runParser (parseConfig) [] $
          ,  _maxPathLength       = defaultMaxPathLength
          , _pleatGitOption       = OptionOn GitOption
          , _pleatTimestampOption = OptionOn TimestampOption
+         , _pleatPrompt          = defaultPrompt
          }
 
 -- TODO: how can I test the various Info options for the Parser like long, help and metavar

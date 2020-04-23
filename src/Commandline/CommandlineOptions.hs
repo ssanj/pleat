@@ -17,6 +17,7 @@ module Commandline.CommandlineOptions
       ,  parseHostname
       ,  parseMaxPathLength
       ,  parseArguments
+      ,  parsePrompt
       ) where
 
 import Options.Applicative
@@ -40,7 +41,12 @@ pleatInfo =
 
 parseConfig :: Parser Config
 parseConfig = 
-  Config <$> parsePleatHostnameOption <*> parseMaxPathLength <*> parseGitOption <*> parseTimestampOption
+  Config <$> 
+    parsePleatHostnameOption <*> 
+    parseMaxPathLength       <*> 
+    parseGitOption           <*> 
+    parseTimestampOption     <*>
+    parsePrompt
 
 parseHostnameDisabled :: Parser OptionStatus
 parseHostnameDisabled = parseOptionStatus "hostname"
@@ -91,3 +97,18 @@ parseMaxPathLength =
       value (_pathLength defaultMaxPathLength)     <>
       metavar "INT"
     )
+
+parsePrompt :: Parser Prompt
+parsePrompt = 
+  Prompt <$>
+    strOption (
+      long "prompt"                 <>
+      help "override prompt"        <>
+      showDefault                   <>
+      value (_prompt defaultPrompt) <>
+      metavar "PROMPT"
+    )
+
+
+
+
