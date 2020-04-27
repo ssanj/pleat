@@ -1,4 +1,5 @@
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE TemplateHaskell    #-}
 
 module Commandline.CommandlineOptions 
       (
@@ -23,7 +24,11 @@ module Commandline.CommandlineOptions
 import Options.Applicative
 import Config
 
+import Paths_pleat (version)
+import Development.GitRev (gitHash)
 import Data.Semigroup ((<>))
+
+import qualified Data.Version as DV
 
 data OptionStatus = Enabled | Disabled deriving stock (Eq, Show)
 
@@ -32,11 +37,11 @@ parseArguments = execParser pleatInfo
 
 pleatInfo :: ParserInfo Config
 pleatInfo = 
-  info (parseConfig <**> helper) (
-    fullDesc <>
-    progDesc "writes out a bash prompt with useful information" <>
-    header "pleat - bash prompt" <>
-    footer "--no options take precedence over other options"
+  info (parseConfig <**> versionHelper <**> helper) (
+    fullDesc                                                         <>
+    progDesc "writes out a bash prompt with useful information"      <>
+    header ("pleat - bash prompt")                                   <>
+    footer "--no-feature options take precedence over other options"
   )
 
 parseConfig :: Parser Config
@@ -63,6 +68,15 @@ parseOptionStatus optionName =
     long ("no-" <> optionName) <>
     help ("turn off " <> optionName <> " display")
   )
+
+versionHelper :: Parser (a -> a)
+versionHelper = 
+  infoOption ("pleat version:" <> DV.showVersion version <>  " githash:" <> $(gitHash))
+             (
+                short 'v'                 <>
+                long "version"            <> 
+                help "Show pleat version"
+             )
 
 parseGitOption :: Parser (PleatOption GitOption)
 parseGitOption = liftA2 optionStatusToPleatOption parseGitDisabled (pure GitOption)
@@ -108,7 +122,3 @@ parsePrompt =
       value (_prompt defaultPrompt) <>
       metavar "PROMPT"
     )
-
-
-
-
