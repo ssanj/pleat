@@ -5,6 +5,8 @@ import Data.Semigroup                  ((<>))
 
 import Commandline.CommandlineOptions
 import Options.Applicative
+import Options.Applicative.Types
+import Options.Applicative.Help.Chunk (unChunk)
 import Config
 
 unit_parsesHostname :: Assertion
@@ -58,6 +60,17 @@ unit_parseConfig = runParser (parseConfig) [] $
          , _pleatTimestampOption = OptionOn TimestampOption
          , _pleatPrompt          = defaultPrompt
          }
+
+unit_versionMod :: Assertion
+unit_versionMod = 
+  case versionHelper of
+    (AltP (OptP ((Option (OptReader options _ _) x))) _) -> 
+      do
+        length options @?= 2
+        options!!(0) @?= (OptLong "version")
+        options!!(1) @?= (OptShort 'v')
+        maybe (assertFailure "invalid help text") (\y -> (show y) @?= "Show pleat version") (unChunk . propHelp $ x)
+    _ -> assertFailure "invalid Mods for version"
 
 -- TODO: how can I test the various Info options for the Parser like long, help and metavar
 runParser :: (Show a, Eq a) => Parser a -> [String] -> a -> Assertion

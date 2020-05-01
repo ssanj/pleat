@@ -19,6 +19,7 @@ module Commandline.CommandlineOptions
       ,  parseMaxPathLength
       ,  parseArguments
       ,  parsePrompt
+      ,  versionHelper
       ) where
 
 import Options.Applicative
