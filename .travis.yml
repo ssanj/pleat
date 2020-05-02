@@ -3,6 +3,8 @@ cache:
   - $HOME/.local/bin
   - $HOME/.stack
 
+sudo: required
+
 os:
 - linux
 - osx
@@ -13,3 +15,4 @@ before_install:
 script:
 - stack setup
 - stack build --ghc-options -O2 --pedantic
+- stack test --ghc-options -O2 --pedantic
