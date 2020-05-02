@@ -1,0 +1,15 @@
+cache:
+  directories:
+  - $HOME/.local/bin
+  - $HOME/.stack
+
+os:
+- linux
+- osx
+
+before_install:
+- bash tools/install-stack.sh
+
+script:
+- stack setup
+- stack build --ghc-options -O2 --pedantic
