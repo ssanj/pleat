@@ -3,6 +3,8 @@ addons:
     packages:
     - libgmp-dev
 
+language: generic
+
 cache:
   directories:
   - $HOME/.local/bin
