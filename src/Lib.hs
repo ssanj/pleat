@@ -1,79 +1,48 @@
 module Lib
-      ( 
-         prompt
-      ) where
+       ( 
+          prompt
+       ) where
 
-import qualified Api as A
-import qualified Format.GitBranch as GF
-import qualified Format.Path      as PF
+import qualified Feature.Git       as F
+import qualified Feature.Timestamp as F
+import qualified Feature.Hostname  as F
+import qualified Feature.Path      as F
+import qualified Feature.User      as F
+import qualified Feature.Prompt    as F
 
 import Config
 
 prompt :: Config -> IO String
 prompt config = do
-  localTime     <- processTimestamp config
-  user          <- processUser            <$> A.getUser
-  hostname      <- processHostname config
-  path          <- (processPath config)   <$> A.getCurrentDirectory
-  isGitRepo     <- (enableGitRepo config) <$> A.isGitRepo
-  let promptEnd = _prompt . _pleatPrompt $ config
-  case isGitRepo of
+  localTime       <- F.processTimestamp config
+  user            <- F.processUser
+  hostname        <- F.processHostname config
+  path            <- F.processPath config
+  showGitFeatures <- F.isEnableGitRepo config
+  let promptEnd   = F.processPromptSuffix config
+  case showGitFeatures of
     True -> do
-      (branch, modified) <- processGitRepo
+      (branch, modified) <- F.processGitRepo
       pure (
               localTime <>
               user      <> 
               hostname  <>
-              ":"       <> 
+              separator <> 
               path      <>
-              ":"       <>
+              separator <> 
               branch    <>
               modified  <>
               promptEnd
             )
-    _         -> 
+    False -> 
       pure (
               localTime <>
-              user      <> 
-              hostname  <> 
-              ":"       <> 
+              user      <>
+              hostname  <>
+              separator <>
               path      <>
               promptEnd
         )
 
-processPath :: Config -> (Maybe A.CurrentDirectory) -> String
-processPath = PF.processPath . _maxPathLength
-
-processTimestamp :: Config -> IO String
-processTimestamp config = 
-  let localTimeMaybe = case config of
-                        Config { _pleatTimestampOption = OptionOn TimestampOption } -> Just . processTime <$> A.getLocalTime
-                        Config { _pleatTimestampOption = OptionOff }                -> pure Nothing
-  in fmap (maybe "" (<> ":")) localTimeMaybe
-
-processHostname :: Config -> IO String
-processHostname config =
-  let hostnameMaybe = case config of
-                        Config { _pleatHostnameOption = OptionOn (HostnameOption (Just (Hostname hostnameOverride))) } -> pure $ Just hostnameOverride
-                        Config { _pleatHostnameOption = OptionOn (HostnameOption Nothing) }                            -> Just . _hostname <$> A.getHostname
-                        Config { _pleatHostnameOption = OptionOff }                                                    -> pure Nothing
-  in fmap (maybe "" ("@" <> )) hostnameMaybe
-
-enableGitRepo :: Config -> (Maybe Bool) -> Bool
-enableGitRepo Config {_pleatGitOption = OptionOn GitOption } hasGitDir = maybe False id hasGitDir
-enableGitRepo Config {_pleatGitOption = OptionOff }                  _ = False
-
-
-processGitRepo :: IO (String, String)
-processGitRepo = do
-  branch       <- GF.processGitRepo <$> A.gitBranchVerbose
-  status       <- GF.isModified     <$> A.gitStatusShort
-  pure (branch, GF.processModified $ status)
-
-processTime :: Maybe A.LocalTime  -> String
-processTime (Just (A.LocalTime localTime)) = "[" <> (take 19 localTime) <> "]"
-processTime Nothing = "-"
-
-processUser :: Maybe A.User  -> String
-processUser (Just (A.User user)) = user
-processUser Nothing = "-"
+separator :: String
+separator = ":"
