@@ -1,7 +1,10 @@
+{-# LANGUAGE LambdaCase #-}
+
 module Feature.Git
        (
+          -- Data types
+          GitBranchModification(..)
           -- Functions
-          isEnableGitRepo
        ,  processGitRepo
        ) where
 
@@ -10,12 +13,18 @@ import qualified Format.GitBranch as GF
 
 import Config
 
-isEnableGitRepo :: Config -> IO Bool
-isEnableGitRepo Config {_pleatGitOption = OptionOn GitOption } = (maybe False id) <$> A.isGitRepo
-isEnableGitRepo Config {_pleatGitOption = OptionOff }          = pure False
+data GitBranchModification = GitBranchModification { _gitBranch :: String, _gitModification :: String } 
 
-processGitRepo :: IO (String, String)
-processGitRepo = do
+processGitRepo :: Config -> IO (Maybe GitBranchModification)
+processGitRepo Config {_pleatGitOption = OptionOn GitOption } = do
+  maybeBool <- A.isGitRepo
+  case maybeBool of
+    Just True  -> Just <$> gitBranchAndModification
+    _          -> pure Nothing
+processGitRepo Config {_pleatGitOption = OptionOff }          = pure Nothing
+
+gitBranchAndModification :: IO GitBranchModification
+gitBranchAndModification = do
   branch       <- GF.processGitRepo <$> A.gitBranchVerbose
   status       <- GF.isModified     <$> A.gitStatusShort
-  pure (branch, GF.processModified $ status)
+  pure $ GitBranchModification branch (GF.processModified status)

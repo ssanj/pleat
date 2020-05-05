@@ -1,10 +1,17 @@
 module Feature.Prompt
        (
+          -- Data types
+          Prompt(..)
           -- Functions
-          processPromptSuffix
+       ,  processPromptSuffix
        ) where
 
-import Config
+import qualified Config as C
 
-processPromptSuffix :: Config -> String
-processPromptSuffix = _prompt . _pleatPrompt
+import Config (Config(..))
+
+
+newtype Prompt = Prompt { _prompt :: String }
+
+processPromptSuffix :: Config -> Maybe Prompt
+processPromptSuffix = Just. Prompt . C._prompt . _pleatPrompt

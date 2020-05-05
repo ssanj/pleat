@@ -35,6 +35,13 @@ unit_parseGitDisabledWithoutDisabledFlag = runParser parseGitDisabled [] Enabled
 unit_parseTimestampDisabledWithDisabledFlag :: Assertion
 unit_parseTimestampDisabledWithDisabledFlag = runParser parseTimestampDisabled ["--no-timestamp"] Disabled
 
+unit_parseTimestampDisabledWithoutDisabledFlag :: Assertion
+unit_parseTimestampDisabledWithoutDisabledFlag = runParser parseTimestampDisabled [] Enabled
+
+
+unit_parsePathDisabledWithDisabledFlag :: Assertion
+unit_parsePathDisabledWithDisabledFlag = runParser parsePathDisabled ["--no-path"] Disabled
+
 -- TODO: handlePleatDisableOption could be PBT tests  
 unit_handlePleatDisableOptionWithDisabled :: Assertion
 unit_handlePleatDisableOptionWithDisabled = optionStatusToPleatOption Disabled "test" @?= OptionOff
@@ -55,7 +62,7 @@ unit_parseConfig :: Assertion
 unit_parseConfig = runParser (parseConfig) [] $ 
   Config { 
             _pleatHostnameOption = OptionOn $ HostnameOption Nothing
-         ,  _maxPathLength       = defaultMaxPathLength
+         ,  _pleatPathOption     = OptionOn $ PathOption $ defaultMaxPathLength
          , _pleatGitOption       = OptionOn GitOption
          , _pleatTimestampOption = OptionOn TimestampOption
          , _pleatPrompt          = defaultPrompt

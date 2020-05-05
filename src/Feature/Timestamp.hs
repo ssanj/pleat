@@ -1,19 +1,19 @@
 module Feature.Timestamp
        (
+          -- Data types
+          DateTime(..)
           -- Functions
-          processTimestamp
+       ,  processTimestamp
        ) where
 
 import qualified Api as A
 import Config
 
-processTimestamp :: Config -> IO String
-processTimestamp config = 
-  let localTimeMaybe = case config of
-                        Config { _pleatTimestampOption = OptionOn TimestampOption } -> Just . processTime <$> A.getLocalTime
-                        Config { _pleatTimestampOption = OptionOff }                -> pure Nothing
-  in fmap (maybe "" (<> ":")) localTimeMaybe
+newtype DateTime = DateTime { _dateTime :: String }
 
-processTime :: Maybe A.LocalTime  -> String
-processTime (Just (A.LocalTime localTime)) = "[" <> (take 19 localTime) <> "]"
-processTime Nothing = "-"
+processTimestamp :: Config -> IO (Maybe DateTime)
+processTimestamp Config { _pleatTimestampOption = OptionOn TimestampOption } = fmap processTime <$> A.getLocalTime
+processTimestamp Config { _pleatTimestampOption = OptionOff }                = pure Nothing
+
+processTime :: A.LocalTime  -> DateTime
+processTime (A.LocalTime localTime) = DateTime $ "[" <> (take 19 localTime) <> "]"

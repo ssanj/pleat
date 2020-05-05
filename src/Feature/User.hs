@@ -1,14 +1,15 @@
 module Feature.User
        (
+          -- Data types
+          User(..)
           -- Functions
-          processUser
+       ,  processUser
        ) where
 
 import qualified Api as A
 
-processUser :: IO String
-processUser = username <$> A.getUser
+newtype User = User { _user :: String }
 
-username :: Maybe A.User  -> String
-username (Just (A.User user)) = user
-username Nothing = "-"
+processUser :: IO (Maybe User)
+processUser = 
+  fmap (\(A.User user)-> User user) <$> A.getUser
