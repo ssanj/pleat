@@ -1,3 +1,5 @@
+{-# LANGUAGE DerivingStrategies #-}
+
 module Feature.User
        (
           -- Data types
@@ -8,7 +10,7 @@ module Feature.User
 
 import qualified Api as A
 
-newtype User = User { _user :: String }
+newtype User = User { _user :: String } deriving stock (Eq, Show)
 
 processUser :: IO (Maybe User)
 processUser = 

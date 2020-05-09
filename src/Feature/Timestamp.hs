@@ -1,3 +1,5 @@
+{-# LANGUAGE DerivingStrategies #-}
+
 module Feature.Timestamp
        (
           -- Data types
@@ -9,7 +11,7 @@ module Feature.Timestamp
 import qualified Api as A
 import Config
 
-newtype DateTime = DateTime { _dateTime :: String }
+newtype DateTime = DateTime { _dateTime :: String } deriving stock (Eq, Show)
 
 processTimestamp :: Config -> IO (Maybe DateTime)
 processTimestamp Config { _pleatTimestampOption = OptionOn TimestampOption } = fmap processTime <$> A.getLocalTime

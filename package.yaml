@@ -83,6 +83,8 @@ tests:
     - tasty
     - tasty-discover
     - tasty-hunit
+    - tasty-hedgehog
+    - hedgehog
     - parsec
     - optparse-applicative
   

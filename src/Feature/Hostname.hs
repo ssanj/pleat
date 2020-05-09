@@ -1,3 +1,5 @@
+{-# LANGUAGE DerivingStrategies #-}
+
 module Feature.Hostname
        (
           -- Data types
@@ -11,7 +13,7 @@ import qualified Api as A
 import Config (Config(..), HostnameOption(..), PleatOption(..))
 import qualified Config as C
 
-newtype Hostname = Hostname { _hostname :: String }
+newtype Hostname = Hostname { _hostname :: String } deriving stock (Eq, Show)
 
 processHostname :: Config -> IO (Maybe Hostname)
 processHostname Config { _pleatHostnameOption = OptionOn (HostnameOption (Just (C.Hostname hostnameOverride))) } = 

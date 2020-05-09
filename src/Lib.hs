@@ -1,6 +1,14 @@
+{-# LANGUAGE DerivingStrategies #-}
+
 module Lib
        ( 
-          prompt
+          -- Data types
+          Promptable(..)
+          -- Functions        
+       ,  prompt
+       ,  showPromptable
+       ,  mkLoginAtMachine
+       ,  combinePromptables
        ) where
 
 import qualified Feature.Git       as F
@@ -10,7 +18,7 @@ import qualified Feature.Path      as F
 import qualified Feature.User      as F
 import qualified Feature.Prompt    as F
         
-import Data.String         (IsString (..))
+import Control.Applicative ((<|>), liftA2)
 import Data.Maybe          (catMaybes)
 import Data.List           (intercalate)
 
@@ -18,69 +26,42 @@ import Config
 
 prompt :: Config -> IO String
 prompt config = do
-  localTime       <- F.processTimestamp config
-  user            <- F.processUser
-  hostname        <- F.processHostname config
-  path            <- F.processPath config
-  gitBranches     <- F.processGitRepo config
-  let promptEnd   = F.processPromptSuffix config
-      fullPrompt  = combinePrompts ":" [
-                                          dateTimeAsPrompt    <$> localTime
-                                       ,  maybeUserHost user hostname
-                                       ,  pathAsPrompt        <$> path 
-                                       ,  gitBranchesAsPrompt <$> gitBranches
-                                       ,  promptAsPrompt      <$> promptEnd
-                                       ]
+  localTime          <- F.processTimestamp config
+  user               <- F.processUser
+  hostname           <- F.processHostname config
+  path               <- F.processPath config
+  gitBranches        <- F.processGitRepo config
+  let promptSuffix   = F.processPromptSuffix config
+      loginAtMachine = mkLoginAtMachine user hostname
+      fullPrompt     = combinePromptables showPromptable ":" [
+                                                                LocalTime <$> localTime
+                                                             ,  loginAtMachine
+                                                             ,  CWD <$> path
+                                                             ,  GitInfo <$> gitBranches
+                                                             ,  PromptSuffix <$> promptSuffix
+                                                             ]
   pure fullPrompt
-  --pure $ createPrompt localTime user hostname path gitBranches promptEnd
-  -- case showGitFeatures of
-  --   True -> do
-  --     (branch, modified) <- F.processGitRepo
-  --     pure (
-  --             localTime <>
-  --             user      <> 
-  --             hostname  <>
-  --             separator <> 
-  --             path      <>
-  --             separator <> 
-  --             branch    <>
-  --             modified  <>
-  --             promptEnd
-  --           )
-  --   False -> 
-  --     pure (
-  --             localTime <>
-  --             user      <>
-  --             hostname  <>
-  --             separator <>
-  --             path      <>
-  --             promptEnd
-  --       )
 
-maybeUserHost :: Maybe F.User -> Maybe F.Hostname -> Maybe String
-maybeUserHost (Just user) (Just hostname) = Just $ (userAsPrompt user) <> "@" <> (hostnameAsPrompt hostname)
-maybeUserHost (Just user) Nothing         = Just $ userAsPrompt user
-maybeUserHost Nothing (Just hostname)     = Just $ hostnameAsPrompt hostname
-maybeUserHost Nothing Nothing             = Nothing
+data Promptable = LocalTime F.DateTime 
+                | Login F.User
+                | Machine F.Hostname
+                | LoginAtMachine F.User F.Hostname
+                | CWD F.Path
+                | GitInfo F.GitBranchModification
+                | PromptSuffix F.Prompt deriving stock (Eq, Show)
 
-dateTimeAsPrompt :: IsString a => F.DateTime -> a
-dateTimeAsPrompt = fromString . F._dateTime
+showPromptable :: Promptable -> String
+showPromptable (LocalTime (F.DateTime dateTime))                    = dateTime
+showPromptable (Login (F.User user))                                = user
+showPromptable (Machine (F.Hostname hostname))                      = hostname
+showPromptable (LoginAtMachine (F.User user) (F.Hostname hostname)) = (user <> "@" <> hostname)
+showPromptable (CWD (F.Path path))                                  = path
+showPromptable (GitInfo (F.GitBranchModification branch modified))  = (branch <> modified)
+showPromptable (PromptSuffix (F.Prompt suffix))                     = suffix
 
-userAsPrompt :: IsString a => F.User -> a
-userAsPrompt = fromString . F._user
+mkLoginAtMachine :: Maybe F.User -> Maybe F.Hostname -> Maybe Promptable
+mkLoginAtMachine user hostname = (liftA2 LoginAtMachine user hostname) <|> (Login <$> user) <|> (Machine <$> hostname)
 
-hostnameAsPrompt :: IsString a => F.Hostname -> a
-hostnameAsPrompt = fromString . F._hostname
+combinePromptables :: (Promptable -> String) -> String -> [Maybe Promptable] -> String
+combinePromptables toString sep = intercalate sep . fmap toString . catMaybes
 
-pathAsPrompt :: IsString a => F.Path -> a
-pathAsPrompt = fromString . F._path
-
-gitBranchesAsPrompt :: (IsString a) => F.GitBranchModification -> a
-gitBranchesAsPrompt (F.GitBranchModification branch modified) = fromString (branch <> modified)
-
-promptAsPrompt :: IsString a => F.Prompt -> a
-promptAsPrompt = fromString . F._prompt
-
--- How can we generalise over intercalate?
-combinePrompts :: String -> [Maybe String] -> String
-combinePrompts sep = intercalate sep . catMaybes

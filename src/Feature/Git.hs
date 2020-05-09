@@ -1,4 +1,5 @@
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE DerivingStrategies #-}
 
 module Feature.Git
        (
@@ -13,7 +14,8 @@ import qualified Format.GitBranch as GF
 
 import Config
 
-data GitBranchModification = GitBranchModification { _gitBranch :: String, _gitModification :: String } 
+data GitBranchModification = 
+  GitBranchModification { _gitBranch :: String, _gitModification :: String } deriving stock (Eq, Show)
 
 processGitRepo :: Config -> IO (Maybe GitBranchModification)
 processGitRepo Config {_pleatGitOption = OptionOn GitOption } = do

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7015892dee4ef78de7d7e68b60bf0ec523cb168811a28001806555ac1e4f45ea
+-- hash: 2904e50218114f82afe7a5e99f2c2cf5fb6b5753915acbc1a71d4715b4ab29b2
 
 name:           pleat
 version:        0.1.0.1
@@ -83,6 +83,7 @@ test-suite pleat-test
   other-modules:
       Commandline.CommandlineOptionsSpec
       Format.GitBranchSpec
+      LibSpec
       Parser.GitParserSpec
       Paths_pleat
   hs-source-dirs:
@@ -90,10 +91,12 @@ test-suite pleat-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -Werror -Weverything -Wno-unsafe -Wno-safe -Wno-implicit-prelude -Wno-missing-import-lists -Wno-missing-export-lists
   build-depends:
       base >=4.7 && <5
+    , hedgehog
     , optparse-applicative
     , parsec
     , pleat
     , tasty
     , tasty-discover
+    , tasty-hedgehog
     , tasty-hunit
   default-language: Haskell2010

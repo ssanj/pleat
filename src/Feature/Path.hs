@@ -1,3 +1,5 @@
+{-# LANGUAGE DerivingStrategies #-}
+
 module Feature.Path
        (
           -- Data types
@@ -11,7 +13,7 @@ import qualified Format.Path as PF
 
 import Config
 
-newtype Path = Path { _path :: String }
+newtype Path = Path { _path :: String } deriving stock (Eq, Show)
 
 processPath :: Config -> IO (Maybe Path)
 processPath (Config { _pleatPathOption = OptionOff })                           = pure Nothing
