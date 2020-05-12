@@ -62,6 +62,6 @@ showPromptable (PromptSuffix (F.Prompt suffix))                     = suffix
 mkLoginAtMachine :: Maybe F.User -> Maybe F.Hostname -> Maybe Promptable
 mkLoginAtMachine user hostname = (liftA2 LoginAtMachine user hostname) <|> (Login <$> user) <|> (Machine <$> hostname)
 
-combinePromptables :: (Promptable -> String) -> String -> [Maybe Promptable] -> String
+combinePromptables :: (a -> String) -> String -> [Maybe a] -> String
 combinePromptables toString sep = intercalate sep . fmap toString . catMaybes
 

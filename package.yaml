@@ -87,4 +87,5 @@ tests:
     - hedgehog
     - parsec
     - optparse-applicative
+    - split
   

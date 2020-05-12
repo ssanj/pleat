@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dab3efca615c097949702f1cff1cdc8a0f9b4ee812923046c791b4d96c3b2e5d
+-- hash: 39a81102bf05abe1c277fac242b44eb0ba5838c088864eecc862972f48ea7959
 
 name:           pleat
 version:        0.1.0.2
@@ -95,6 +95,7 @@ test-suite pleat-test
     , optparse-applicative
     , parsec
     , pleat
+    , split
     , tasty
     , tasty-discover
     , tasty-hedgehog
