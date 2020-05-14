@@ -34,7 +34,7 @@ library:
   - parsec
   - hostname
   - optparse-applicative
-  - gitrev    
+  - gitrev
 
   ghc-options:
   - -Werror
@@ -52,32 +52,32 @@ executables:
   pleat:
     main:                Main.hs
     source-dirs:         app
-    
+
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    
+
     dependencies:
     - pleat
-    
+
 tests:
   pleat-test:
     main:                Driver.hs
     source-dirs:         test
-    
+
     ghc-options:
     - -threaded
     - -rtsopts
-    - -with-rtsopts=-N     
+    - -with-rtsopts=-N
     - -Werror
-    - -Weverything      
+    - -Weverything
     - -Wno-unsafe
     - -Wno-safe
     - -Wno-implicit-prelude
     - -Wno-missing-import-lists
     - -Wno-missing-export-lists
-    
+
     dependencies:
     - pleat
     - tasty
@@ -88,4 +88,4 @@ tests:
     - parsec
     - optparse-applicative
     - split
-  
+

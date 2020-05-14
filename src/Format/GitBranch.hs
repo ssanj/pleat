@@ -23,7 +23,7 @@ data GitBranchType = LocalAndRemote Git.LocalAndRemoteBranch  | InitialCommit de
 
 formatGitBranch :: Maybe GitBranchType -> String
 formatGitBranch (Just InitialCommit)                             = branchColour "InitialCommit"
-formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch localBranch (Git.GitHash hash)) (Just (Git.RemoteBranch remote branch (Just (Git.CommitsAhead commitsAhead))))))) = 
+formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch localBranch (Git.GitHash hash)) (Just (Git.RemoteBranch remote branch (Just (Git.CommitsAhead commitsAhead))))))) =
   "["                                    <>
   (branchColour localBranch)             <>
   "(" <> hash <> ")"                     <>
@@ -34,7 +34,7 @@ formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch
   "(^"                                   <>
   (modifiedColour . show $ commitsAhead) <>
   ")]"
-formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch localBranch (Git.GitHash hash)) (Just (Git.RemoteBranch remote branch Nothing))))) = 
+formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch localBranch (Git.GitHash hash)) (Just (Git.RemoteBranch remote branch Nothing))))) =
   "["                        <>
   (branchColour localBranch) <>
   "(" <> hash <> ")"         <>
@@ -42,21 +42,21 @@ formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch
   (remoteColour remote)      <>
   "/"                        <>
   (branchColour branch)      <>
-  "]"  
-formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch branch (Git.GitHash hash)) Nothing))) = 
-  "["                   <> 
-  (branchColour branch) <> 
-  "(" <> hash <> ")"    <>  
+  "]"
+formatGitBranch (Just (LocalAndRemote (Git.LocalAndRemoteBranch (Git.LocalBranch branch (Git.GitHash hash)) Nothing))) =
+  "["                   <>
+  (branchColour branch) <>
+  "(" <> hash <> ")"    <>
   "]"
 formatGitBranch Nothing = "-"
 
 -- TODO: Write a test for this
 processGitBranch :: Maybe [String] -> Maybe GitBranchType
-processGitBranch (Just linesOfOutput@(_:_)) = 
+processGitBranch (Just linesOfOutput@(_:_)) =
   let matchedLines =  take 1 $ filter ("*" `isPrefixOf`) linesOfOutput
   in case matchedLines of
       []               -> Nothing -- No active branch
-      (branchString:_) -> 
+      (branchString:_) ->
         let localAndRemote = parse Git.localAndRemoteBranch "" branchString
         in case localAndRemote of
           Right (Just lrb@(Git.LocalAndRemoteBranch _ _)) -> Just $ LocalAndRemote lrb
