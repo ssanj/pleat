@@ -1,11 +1,12 @@
 {-# LANGUAGE DerivingStrategies #-}
 
 module Lib
-       ( 
+       (
           -- Data types
           Promptable(..)
-          -- Functions        
+          -- Functions
        ,  prompt
+       ,  promptBehaviour
        ,  showPromptable
        ,  mkLoginAtMachine
        ,  combinePromptables
@@ -17,21 +18,22 @@ import qualified Feature.Hostname  as F
 import qualified Feature.Path      as F
 import qualified Feature.User      as F
 import qualified Feature.Prompt    as F
-        
+import Feature.Model (PromptBehaviour(..))
+
 import Control.Applicative ((<|>), liftA2)
 import Data.Maybe          (catMaybes)
 import Data.List           (intercalate)
 
 import Config
 
-prompt :: Config -> IO String
-prompt config = do
-  localTime          <- F.processTimestamp config
-  user               <- F.processUser
-  hostname           <- F.processHostname config
-  path               <- F.processPath config
-  gitBranches        <- F.processGitRepo config
-  let promptSuffix   = F.processPromptSuffix config
+promptBehaviour :: Monad m => PromptBehaviour m -> Config -> m String
+promptBehaviour behaviour config = do
+  localTime          <- _processTimestamp   behaviour $ config
+  user               <- _processUser        behaviour
+  hostname           <- _processHostname    behaviour $ config
+  path               <- _processPath        behaviour $ config
+  gitBranches        <- _processGitRepo     behaviour $ config
+  let promptSuffix   = _processPromptSuffix behaviour $ config
       loginAtMachine = mkLoginAtMachine user hostname
       fullPrompt     = combinePromptables showPromptable ":" [
                                                                 LocalTime <$> localTime
@@ -42,7 +44,19 @@ prompt config = do
                                                              ]
   pure fullPrompt
 
-data Promptable = LocalTime F.DateTime 
+prompt :: Config -> IO String
+prompt config = promptBehaviour behaviour config
+                where
+                  behaviour :: PromptBehaviour IO
+                  behaviour = PromptBehaviour
+                                F.processTimestamp
+                                F.processUser
+                                F.processHostname
+                                F.processPath
+                                F.processGitRepo
+                                F.processPromptSuffix
+
+data Promptable = LocalTime F.DateTime
                 | Login F.User
                 | Machine F.Hostname
                 | LoginAtMachine F.User F.Hostname
