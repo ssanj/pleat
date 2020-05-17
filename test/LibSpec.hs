@@ -2,9 +2,8 @@
 
 module LibSpec where
 
-import Test.Tasty.HUnit      ((@?=), Assertion)
-import Data.Maybe            (catMaybes)
-import Data.Functor.Identity (Identity(..))
+import Test.Tasty.HUnit ((@?=), Assertion)
+import Data.Maybe       (catMaybes)
 
 import qualified Hedgehog              as H
 import qualified Hedgehog.Gen          as Gen
@@ -12,15 +11,9 @@ import qualified Hedgehog.Range        as Range
 
 import qualified Data.List             as L
 import qualified Data.Foldable         as F
--- import qualified Data.List.Split       as L
 
-import qualified Feature.Git       as F
-import qualified Feature.Timestamp as F
 import qualified Feature.Hostname  as F
-import qualified Feature.Path      as F
 import qualified Feature.User      as F
-import qualified Feature.Prompt    as F
-import qualified Feature.Model     as F
 
 import Lib
 
@@ -76,21 +69,6 @@ hprop_combinePromptablesAllJustMaintainOrderInOutput =
         actual   = combinePromptables id sep maybeStrings
         expected = F.fold $ catMaybes maybeStrings
     actual H.=== expected
-
--- TODO: move this into its own Spec
--- Then we can test all the different combinations
-unit_promptBehaviour :: Assertion
-unit_promptBehaviour =
-  let localTime      = const $ Identity $ Just $ F.DateTime "[2020-05-18 12:27:53]"
-      user           = Identity $ Just $ F.User "jayneway"
-      hostname       = const $  Identity $ Just $ F.Hostname "voyager"
-      path           = const $  Identity $ Just $ F.Path "/medical/lab/"
-      gitBranches    = const $  Identity $ Just $ F.GitBranchModification "[upgrade-hologram --> remote/upgrade-hologram]" ":*"
-      promptSuffix   = const $  Just $ F.Prompt "-->"
-      behaviour      = F.PromptBehaviour localTime user hostname path gitBranches promptSuffix
-      actualPrompt   = promptBehaviour behaviour undefined
-      expectedPrompt = "[2020-05-18 12:27:53]:jayneway@voyager:/medical/lab/:[upgrade-hologram --> remote/upgrade-hologram]:*:-->"
-  in (runIdentity actualPrompt) @?= expectedPrompt
 
 genString :: H.Gen String
 genString = Gen.filter (/= "") $ Gen.string (Range.linear 0 100) Gen.alpha
