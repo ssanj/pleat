@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 09fa45c9a4e89f6fdfb0241f3052c5acc8692b9c38b3cb1efb71ad280d1c58f0
+-- hash: 31e9f68cd74dca5f1b5939733a9049fbbbbe4e011cc03ccbb0b5ca8f492fdd9a
 
 name:           pleat
 version:        0.1.1.0
@@ -89,7 +89,7 @@ test-suite pleat-test
       Paths_pleat
   hs-source-dirs:
       test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Werror -Weverything -Wno-unsafe -Wno-safe -Wno-implicit-prelude -Wno-missing-import-lists -Wno-missing-export-lists
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Werror -Weverything -Wno-unsafe -Wno-safe -Wno-implicit-prelude -Wno-missing-import-lists -Wno-missing-export-lists -Wno-missing-local-signatures
   build-depends:
       base >=4.7 && <5
     , hedgehog

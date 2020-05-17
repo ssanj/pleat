@@ -26,6 +26,7 @@ import Data.List           (intercalate)
 
 import Config
 
+-- TODO: extract prompt section separator - don't default to ":"
 promptBehaviour :: Monad m => PromptBehaviour m -> Config -> m String
 promptBehaviour behaviour config = do
   localTime          <- _processTimestamp   behaviour $ config

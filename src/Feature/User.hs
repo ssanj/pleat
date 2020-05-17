@@ -13,5 +13,5 @@ import qualified Api as A
 newtype User = User { _user :: String } deriving stock (Eq, Show)
 
 processUser :: IO (Maybe User)
-processUser = 
+processUser =
   fmap (\(A.User user)-> User user) <$> A.getUser

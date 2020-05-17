@@ -1,5 +1,5 @@
 name:                pleat
-version:             0.1.1.0
+version:             0.1.1.1
 github:              "ssanj/pleat"
 license:             BSD3
 author:              "sanjiv sahayam"
@@ -77,6 +77,7 @@ tests:
     - -Wno-implicit-prelude
     - -Wno-missing-import-lists
     - -Wno-missing-export-lists
+    - -Wno-missing-local-signatures
 
     dependencies:
     - pleat
