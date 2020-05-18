@@ -10,11 +10,11 @@ import Options.Applicative.Help.Chunk (unChunk)
 import Config
 
 unit_parsesHostname :: Assertion
-unit_parsesHostname = 
+unit_parsesHostname =
   runParser parseHostname ["--hostname", "DreamMachine"] $ Just (Hostname "DreamMachine")
 
 unit_parsesMaxPathLength :: Assertion
-unit_parsesMaxPathLength = 
+unit_parsesMaxPathLength =
   runParser parseMaxPathLength ["--max-path-length", "10"] $ MaxPathLength 10
 
 unit_parsesMaxPathLengthWithDefault :: Assertion
@@ -42,7 +42,7 @@ unit_parseTimestampDisabledWithoutDisabledFlag = runParser parseTimestampDisable
 unit_parsePathDisabledWithDisabledFlag :: Assertion
 unit_parsePathDisabledWithDisabledFlag = runParser parsePathDisabled ["--no-path"] Disabled
 
--- TODO: handlePleatDisableOption could be PBT tests  
+-- TODO: handlePleatDisableOption could be PBT tests
 unit_handlePleatDisableOptionWithDisabled :: Assertion
 unit_handlePleatDisableOptionWithDisabled = optionStatusToPleatOption Disabled "test" @?= OptionOff
 
@@ -59,19 +59,20 @@ unit_parsePrompt :: Assertion
 unit_parsePrompt = runParser parsePrompt ["--prompt", "|> "] (Prompt "|> ")
 
 unit_parseConfig :: Assertion
-unit_parseConfig = runParser (parseConfig) [] $ 
-  Config { 
+unit_parseConfig = runParser (parseConfig) [] $
+  Config {
             _pleatHostnameOption = OptionOn $ HostnameOption Nothing
          ,  _pleatPathOption     = OptionOn $ PathOption $ defaultMaxPathLength
          , _pleatGitOption       = OptionOn GitOption
          , _pleatTimestampOption = OptionOn TimestampOption
          , _pleatPrompt          = defaultPrompt
+         , _pleatPromptSeparator = defaultPromptSeparator
          }
 
 unit_versionMod :: Assertion
-unit_versionMod = 
+unit_versionMod =
   case versionHelper of
-    (AltP (OptP ((Option (OptReader options _ _) x))) _) -> 
+    (AltP (OptP ((Option (OptReader options _ _) x))) _) ->
       do
         length options @?= 2
         options!!(0) @?= (OptLong "version")

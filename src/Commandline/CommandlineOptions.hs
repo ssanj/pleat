@@ -1,7 +1,7 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE TemplateHaskell    #-}
 
-module Commandline.CommandlineOptions 
+module Commandline.CommandlineOptions
       (
          -- Data types
          OptionStatus(..)
@@ -38,7 +38,7 @@ parseArguments :: IO Config
 parseArguments = execParser pleatInfo
 
 pleatInfo :: ParserInfo Config
-pleatInfo = 
+pleatInfo =
   info (parseConfig <**> versionHelper <**> helper) (
     fullDesc                                                         <>
     progDesc "writes out a bash prompt with useful information"      <>
@@ -47,13 +47,14 @@ pleatInfo =
   )
 
 parseConfig :: Parser Config
-parseConfig = 
-  Config <$> 
-    parsePleatHostnameOption <*> 
-    parsePathOption          <*> 
-    parseGitOption           <*> 
+parseConfig =
+  Config <$>
+    parsePleatHostnameOption <*>
+    parsePathOption          <*>
+    parseGitOption           <*>
     parseTimestampOption     <*>
-    parsePrompt
+    parsePrompt              <*>
+    parsePromptSeparator
 
 parseHostnameDisabled :: Parser OptionStatus
 parseHostnameDisabled = parseOptionStatus "hostname"
@@ -68,18 +69,18 @@ parsePathDisabled :: Parser OptionStatus
 parsePathDisabled = parseOptionStatus "path"
 
 parseOptionStatus :: String -> Parser OptionStatus
-parseOptionStatus optionName = 
+parseOptionStatus optionName =
   flag Enabled Disabled (
     long ("no-" <> optionName) <>
     help ("turn off " <> optionName <> " display")
   )
 
 versionHelper :: Parser (a -> a)
-versionHelper = 
+versionHelper =
   infoOption ("pleat version:" <> DV.showVersion version <>  " githash:" <> $(gitHash))
              (
                 short 'v'                 <>
-                long "version"            <> 
+                long "version"            <>
                 help "Show pleat version"
              )
 
@@ -93,15 +94,15 @@ parsePathOption :: Parser (PleatOption PathOption)
 parsePathOption = liftA2 optionStatusToPleatOption parsePathDisabled (PathOption <$> parseMaxPathLength)
 
 parsePleatHostnameOption :: Parser (PleatOption HostnameOption)
-parsePleatHostnameOption = liftA2 optionStatusToPleatOption parseHostnameDisabled (HostnameOption <$> parseHostname) 
+parsePleatHostnameOption = liftA2 optionStatusToPleatOption parseHostnameDisabled (HostnameOption <$> parseHostname)
 
 optionStatusToPleatOption :: OptionStatus -> a -> PleatOption a
 optionStatusToPleatOption Enabled  = OptionOn
 optionStatusToPleatOption Disabled = const OptionOff
 
 parseHostname :: Parser (Maybe Hostname)
-parseHostname = 
-  let supplied = 
+parseHostname =
+  let supplied =
         Hostname <$> strOption (
           long "hostname"          <>
           help "override hostname" <>
@@ -110,8 +111,8 @@ parseHostname =
   in (Just <$> supplied) <|> (pure Nothing)
 
 parseMaxPathLength :: Parser MaxPathLength
-parseMaxPathLength = 
-  MaxPathLength <$> 
+parseMaxPathLength =
+  MaxPathLength <$>
     option auto (
       long "max-path-length"                       <>
       help "maximum length for the path displayed" <>
@@ -121,7 +122,7 @@ parseMaxPathLength =
     )
 
 parsePrompt :: Parser Prompt
-parsePrompt = 
+parsePrompt =
   Prompt <$>
     strOption (
       long "prompt"                 <>
@@ -129,4 +130,15 @@ parsePrompt =
       showDefault                   <>
       value (_prompt defaultPrompt) <>
       metavar "PROMPT"
+    )
+
+parsePromptSeparator :: Parser PromptSeparator
+parsePromptSeparator =
+  PromptSeparator <$>
+    strOption (
+      long "prompt-separator"                         <>
+      help "override prompt separator"                <>
+      showDefault                                     <>
+      value (_promptSeparator defaultPromptSeparator) <>
+      metavar "SEP"
     )

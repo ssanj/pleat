@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Config 
+module Config
        (
            -- Data Types
            Config(..)
@@ -8,34 +8,38 @@ module Config
         ,  PleatOption(..)
         ,  HostnameOption(..)
         ,  PathOption(..)
-        ,  Hostname(..)        
-        ,  GitOption(..)        
-        ,  TimestampOption(..)        
-        ,  Prompt(..)        
+        ,  Hostname(..)
+        ,  GitOption(..)
+        ,  TimestampOption(..)
+        ,  Prompt(..)
+        ,  PromptSeparator(..)
            -- Functions
         ,  defaultMaxPathLength
         ,  defaultPrompt
+        ,  defaultPromptSeparator
         ) where
 
 -- import qualified Parser.GitParser as GP
 
-newtype HostnameOption = HostnameOption { _overrideHostname ::  Maybe Hostname } deriving stock (Eq, Show)
-newtype Hostname       = Hostname { _hostname :: String } deriving stock (Eq, Show)
-newtype Prompt         = Prompt { _prompt :: String } deriving stock (Eq, Show)
-newtype MaxPathLength  = MaxPathLength { _pathLength :: Int } deriving stock (Eq, Show)
-newtype PathOption  = PathOption { _maxPathLength :: MaxPathLength } deriving stock (Eq, Show)
+newtype HostnameOption  = HostnameOption { _overrideHostname ::  Maybe Hostname } deriving stock (Eq, Show)
+newtype Hostname        = Hostname { _hostname :: String } deriving stock (Eq, Show)
+newtype Prompt          = Prompt { _prompt :: String } deriving stock (Eq, Show)
+newtype PromptSeparator = PromptSeparator { _promptSeparator :: String } deriving stock (Eq, Show)
+newtype MaxPathLength   = MaxPathLength { _pathLength :: Int } deriving stock (Eq, Show)
+newtype PathOption      = PathOption { _maxPathLength :: MaxPathLength } deriving stock (Eq, Show)
 
 data PleatOption a   = OptionOff | OptionOn a deriving stock (Eq, Show)
 data GitOption       = GitOption deriving stock (Eq, Show)
 data TimestampOption = TimestampOption deriving stock (Eq, Show)
 
 
-data Config = Config { 
+data Config = Config {
    _pleatHostnameOption  :: PleatOption HostnameOption
-,  _pleatPathOption      :: PleatOption PathOption 
+,  _pleatPathOption      :: PleatOption PathOption
 ,  _pleatGitOption       :: PleatOption GitOption
 ,  _pleatTimestampOption :: PleatOption TimestampOption
 ,  _pleatPrompt          :: Prompt
+,  _pleatPromptSeparator :: PromptSeparator
 } deriving stock (Eq, Show)
 
 
@@ -44,3 +48,6 @@ defaultMaxPathLength = MaxPathLength 50
 
 defaultPrompt :: Prompt
 defaultPrompt = Prompt "> "
+
+defaultPromptSeparator :: PromptSeparator
+defaultPromptSeparator = PromptSeparator ":"

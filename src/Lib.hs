@@ -12,12 +12,13 @@ module Lib
        ,  combinePromptables
        ) where
 
-import qualified Feature.Git       as F
-import qualified Feature.Timestamp as F
-import qualified Feature.Hostname  as F
-import qualified Feature.Path      as F
-import qualified Feature.User      as F
-import qualified Feature.Prompt    as F
+import qualified Feature.Git             as F
+import qualified Feature.Timestamp       as F
+import qualified Feature.Hostname        as F
+import qualified Feature.Path            as F
+import qualified Feature.User            as F
+import qualified Feature.Prompt          as F
+import qualified Feature.PromptSeparator as F
 import Feature.Model (PromptBehaviour(..))
 
 import Control.Applicative ((<|>), liftA2)
@@ -29,20 +30,22 @@ import Config
 -- TODO: extract prompt section separator - don't default to ":"
 promptBehaviour :: Monad m => PromptBehaviour m -> Config -> m String
 promptBehaviour behaviour config = do
-  localTime          <- _processTimestamp   behaviour $ config
-  user               <- _processUser        behaviour
-  hostname           <- _processHostname    behaviour $ config
-  path               <- _processPath        behaviour $ config
-  gitBranches        <- _processGitRepo     behaviour $ config
-  let promptSuffix   = _processPromptSuffix behaviour $ config
-      loginAtMachine = mkLoginAtMachine user hostname
-      fullPrompt     = combinePromptables showPromptable ":" [
-                                                                LocalTime <$> localTime
-                                                             ,  loginAtMachine
-                                                             ,  CWD <$> path
-                                                             ,  GitInfo <$> gitBranches
-                                                             ,  PromptSuffix <$> promptSuffix
-                                                             ]
+  localTime           <- _processTimestamp   behaviour $ config
+  user                <- _processUser        behaviour
+  hostname            <- _processHostname    behaviour $ config
+  path                <- _processPath        behaviour $ config
+  gitBranches         <- _processGitRepo     behaviour $ config
+  let promptSuffix    = _processPromptSuffix behaviour $ config
+      loginAtMachine  = mkLoginAtMachine user hostname
+      promptSeparator = F._promptSeparator . _processPromptSeparator behaviour $ config
+      fullPrompt      =
+        combinePromptables showPromptable promptSeparator [
+                                                             LocalTime <$> localTime
+                                                          ,  loginAtMachine
+                                                          ,  CWD <$> path
+                                                          ,  GitInfo <$> gitBranches
+                                                          ,  PromptSuffix <$> promptSuffix
+                                                          ]
   pure fullPrompt
 
 prompt :: Config -> IO String
@@ -56,6 +59,7 @@ prompt config = promptBehaviour behaviour config
                                 F.processPath
                                 F.processGitRepo
                                 F.processPromptSuffix
+                                F.processPromptSeparator
 
 data Promptable = LocalTime F.DateTime
                 | Login F.User
@@ -63,7 +67,7 @@ data Promptable = LocalTime F.DateTime
                 | LoginAtMachine F.User F.Hostname
                 | CWD F.Path
                 | GitInfo F.GitBranchModification
-                | PromptSuffix F.Prompt deriving stock (Eq, Show)
+                | PromptSuffix F.Prompt  deriving stock (Eq, Show)
 
 showPromptable :: Promptable -> String
 showPromptable (LocalTime (F.DateTime dateTime))                    = dateTime
