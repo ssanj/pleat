@@ -20,6 +20,7 @@ module Commandline.CommandlineOptions
       ,  parseMaxPathLength
       ,  parseArguments
       ,  parsePrompt
+      ,  parsePromptSeparator
       ,  versionHelper
       ) where
 

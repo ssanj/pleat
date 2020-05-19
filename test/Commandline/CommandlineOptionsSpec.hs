@@ -1,6 +1,6 @@
 module Commandline.CommandlineOptionsSpec where
 
-import Test.Tasty.HUnit                (assertFailure, (@?=), Assertion)
+import Test.Tasty.HUnit                (assertFailure, assertBool, (@?=), Assertion)
 import Data.Semigroup                  ((<>))
 
 import Commandline.CommandlineOptions
@@ -8,6 +8,11 @@ import Options.Applicative
 import Options.Applicative.Types
 import Options.Applicative.Help.Chunk (unChunk)
 import Config
+
+newtype MetaVar = MetaVar String
+newtype HelpText = HelpText String
+newtype ModName = ModName String
+newtype DefaultVal = DefaultVal { _defaultVal :: String }
 
 unit_parsesHostname :: Assertion
 unit_parsesHostname =
@@ -38,7 +43,6 @@ unit_parseTimestampDisabledWithDisabledFlag = runParser parseTimestampDisabled [
 unit_parseTimestampDisabledWithoutDisabledFlag :: Assertion
 unit_parseTimestampDisabledWithoutDisabledFlag = runParser parseTimestampDisabled [] Enabled
 
-
 unit_parsePathDisabledWithDisabledFlag :: Assertion
 unit_parsePathDisabledWithDisabledFlag = runParser parsePathDisabled ["--no-path"] Disabled
 
@@ -58,8 +62,11 @@ unit_parseOptionStatusWithDisabledFlag = runParser (parseOptionStatus "whatever"
 unit_parsePrompt :: Assertion
 unit_parsePrompt = runParser parsePrompt ["--prompt", "|> "] (Prompt "|> ")
 
+unit_parsePromptSeparator :: Assertion
+unit_parsePromptSeparator = runParser parsePromptSeparator ["--prompt-separator", "#"] (PromptSeparator "#")
+
 unit_parseConfig :: Assertion
-unit_parseConfig = runParser (parseConfig) [] $
+unit_parseConfig = runParser parseConfig [] $
   Config {
             _pleatHostnameOption = OptionOn $ HostnameOption Nothing
          ,  _pleatPathOption     = OptionOn $ PathOption $ defaultMaxPathLength
@@ -71,14 +78,47 @@ unit_parseConfig = runParser (parseConfig) [] $
 
 unit_versionMod :: Assertion
 unit_versionMod =
-  case versionHelper of
-    (AltP (OptP ((Option (OptReader options _ _) x))) _) ->
+  assertParserMod
+    versionHelper
+    [OptLong "version", OptShort 'v']
+    (HelpText "Show pleat version")
+    (MetaVar "")
+    Nothing
+    (ModName "version")
+
+unit_promptSeparatorMod :: Assertion
+unit_promptSeparatorMod =
+    assertParserMod
+    parsePromptSeparator
+    [OptLong "prompt-separator"]
+    (HelpText "override prompt separator")
+    (MetaVar "SEP")
+    (Just $ DefaultVal "\":\"")
+    (ModName "prompt separator")
+
+-- TODO: Add visibility
+assertParserMod :: Parser a -> [OptName] -> HelpText -> MetaVar -> (Maybe DefaultVal) -> ModName -> Assertion
+assertParserMod parserOfA expectedOptionNames (HelpText expectedHelpText) (MetaVar expectedMetaVar) maybeDefaultVal (ModName modName) =
+  case parserOfA of
+    (AltP (OptP ((Option (OptReader options _ _) optProperties))) _) ->
       do
-        length options @?= 2
-        options!!(0) @?= (OptLong "version")
-        options!!(1) @?= (OptShort 'v')
-        maybe (assertFailure "invalid help text") (\y -> (show y) @?= "Show pleat version") (unChunk . propHelp $ x)
-    _ -> assertFailure "invalid Mods for version"
+        let optionNameError = "did not contain all option names, actual: "
+                              <> (show options)
+                              <> ", expected: "
+                              <> (show expectedOptionNames)
+        assertBool optionNameError $ all (`elem` options) expectedOptionNames
+        maybe (assertFailure "invalid help text") (\y -> (show y) @?= expectedHelpText) (unChunk . propHelp $ optProperties)
+        (propMetaVar optProperties) @?= expectedMetaVar
+        case (propShowDefault optProperties, maybeDefaultVal) of
+          (Just actualDefaultProp, Just expectedDefaultVal) -> actualDefaultProp @?= _defaultVal expectedDefaultVal
+          (Nothing,                Nothing)                 -> pure ()
+          (actualDefaultProp,      expectedDefaultVal)      -> assertFailure $
+                                                                "invalid default value, actual: "
+                                                                <> (show actualDefaultProp)
+                                                                <> ", expected: "
+                                                                <> (show $ fmap _defaultVal expectedDefaultVal)
+    _ -> assertFailure $ "invalid Mods for " <> modName
+
 
 -- TODO: how can I test the various Info options for the Parser like long, help and metavar
 runParser :: (Show a, Eq a) => Parser a -> [String] -> a -> Assertion
