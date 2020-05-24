@@ -4,11 +4,11 @@ module Parser.GitParser
        (
           -- Data types
           Parser
-       ,  LocalBranch(..) 
-       ,  RemoteBranch(..) 
-       ,  LocalAndRemoteBranch(..) 
-       ,  CommitsAhead(..) 
-       ,  GitHash(..) 
+       ,  LocalBranch(..)
+       ,  RemoteBranch(..)
+       ,  LocalAndRemoteBranch(..)
+       ,  CommitsAhead(..)
+       ,  GitHash(..)
           -- Functions
        ,  localBranch
        ,  remoteBranch
@@ -37,7 +37,7 @@ parseLocalBranch = P.try $ do
   _          <- P.char '*'
   _          <- P.space
   branchName <- P.try $ P.many1 $ P.noneOf "^~ \\"
-  _          <- P.space
+  _          <- P.try $ P.many1 P.space
   hash       <- P.try $ P.many1 $ P.noneOf "^~ \\"
   pure $ LocalBranch branchName (GitHash hash)
 
