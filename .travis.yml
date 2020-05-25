@@ -18,8 +18,9 @@ os:
 
 before_install:
 - bash tools/install-stack.sh
+- bash tools/install-ghr.sh
 
 script:
 - stack setup
-- stack build --ghc-options -O2 --pedantic
 - stack test --ghc-options -O2 --pedantic
+- bash tools/attach-binary.sh
