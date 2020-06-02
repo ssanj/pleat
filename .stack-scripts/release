@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -Eeuo pipefail
+
+CURRENT_VERSION=$(grep 'version:' package.yaml | sed  s/" "/""/g | cut -d':' -f2)
+echo "current version: $CURRENT_VERSION"
+COMPONENT_VERSION=$(echo "$CURRENT_VERSION" | cut -d'.' -f1)
+MAJOR_VERSION=$(echo "$CURRENT_VERSION" | cut -d'.' -f2)
+MINOR_VERSION=$(echo "$CURRENT_VERSION" | cut -d'.' -f3)
+PATCH_VERSION=$(echo "$CURRENT_VERSION" | cut -d'.' -f4)
+UPDATED_PATCH_VERSION=$((PATCH_VERSION + 1))
+PROPOSED_VERSION="$COMPONENT_VERSION.$MAJOR_VERSION.$MINOR_VERSION.$UPDATED_PATCH_VERSION"
+echo "please enter new version: ($PROPOSED_VERSION)"
+read USER_NEW_VERSION
+if [[ $USER_NEW_VERSION = "" ]]; then
+  NEW_VERSION="$PROPOSED_VERSION"
+else
+  NEW_VERSION="$USER_NEW_VERSION"
+fi
+
+echo "Use $NEW_VERSION (Y/N)?"
+read -s -n 1 PROCEED
+if [[ $PROCEED = "y" ]]; then
+  echo "proceeding with version: $NEW_VERSION"
+  $(git pull)
+  $(sed -i '' 's/'"$CURRENT_VERSION"'/'"$NEW_VERSION"'/g' package.yaml)
+  $(stack build --fast) # to force update .cabal file
+  $(git commit -a -m "Bump to version $NEW_VERSION" 2>&1 > /dev/null)
+  $(git tag 'v'"$NEW_VERSION"'')
+  $(git push)
+  $(git push --tags)
+else
+  echo "aborting"
+fi
+
