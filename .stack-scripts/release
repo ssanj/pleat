@@ -22,7 +22,7 @@ echo "Use $NEW_VERSION (Y/N)?"
 read -s -n 1 PROCEED
 if [[ $PROCEED = "y" ]]; then
   echo "proceeding with version: $NEW_VERSION"
-  $(git pull)
+  $(git pull 2>&1 > /dev/null)
   $(sed -i '' 's/'"$CURRENT_VERSION"'/'"$NEW_VERSION"'/g' package.yaml)
   $(stack build --fast) # to force update .cabal file
   $(git commit -a -m "Bump to version $NEW_VERSION" 2>&1 > /dev/null)
