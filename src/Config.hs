@@ -34,12 +34,12 @@ data TimestampOption = TimestampOption deriving stock (Eq, Show)
 
 
 data Config = Config {
-   _pleatHostnameOption  :: PleatOption HostnameOption
-,  _pleatPathOption      :: PleatOption PathOption
-,  _pleatGitOption       :: PleatOption GitOption
-,  _pleatTimestampOption :: PleatOption TimestampOption
-,  _pleatPrompt          :: Prompt
-,  _pleatPromptSeparator :: PromptSeparator
+   _pleatHostnameOverrideOption :: PleatOption HostnameOption
+,  _pleatPathOption             :: PleatOption PathOption
+,  _pleatGitOption              :: PleatOption GitOption
+,  _pleatTimestampOption        :: PleatOption TimestampOption
+,  _pleatPrompt                 :: Prompt
+,  _pleatPromptSeparator        :: PromptSeparator
 } deriving stock (Eq, Show)
 
 

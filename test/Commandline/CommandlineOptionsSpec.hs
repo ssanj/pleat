@@ -26,10 +26,10 @@ unit_parsesMaxPathLengthWithDefault :: Assertion
 unit_parsesMaxPathLengthWithDefault = runParser parseMaxPathLength [] defaultMaxPathLength
 
 unit_parseHostnameDisabledWithDisabledFlag :: Assertion
-unit_parseHostnameDisabledWithDisabledFlag = runParser parseHostnameDisabled ["--no-hostname"] Disabled
+unit_parseHostnameDisabledWithDisabledFlag = runParser parseHostnameDisabled ["--no-hostname"] OptionOff
 
 unit_parseHostnameDisabledWithoutDisabledFlag :: Assertion
-unit_parseHostnameDisabledWithoutDisabledFlag = runParser parseHostnameDisabled [] Enabled
+unit_parseHostnameDisabledWithoutDisabledFlag = runParserWithFailure parseHostnameDisabled [] "Missing: --no-hostname"
 
 unit_parseGitDisabledWithDisabledFlag :: Assertion
 unit_parseGitDisabledWithDisabledFlag = runParser parseGitDisabled ["--no-git"] Disabled
@@ -50,6 +50,13 @@ unit_parsePathDisabledWithDisabledFlag = runParser parsePathDisabled ["--no-path
 unit_handlePleatDisableOptionWithDisabled :: Assertion
 unit_handlePleatDisableOptionWithDisabled = optionStatusToPleatOption Disabled "test" @?= OptionOff
 
+
+unit_handleParseDisabledOrFailWithoutFlag :: Assertion
+unit_handleParseDisabledOrFailWithoutFlag = runParserWithFailure (parseDisabledOrFail "test-flag" :: Parser (PleatOption String)) [] "Missing: --no-test-flag"
+
+unit_handleParseDisabledOrFailWithFlag :: Assertion
+unit_handleParseDisabledOrFailWithFlag = runParser (parseDisabledOrFail "test-flag" :: Parser (PleatOption String)) ["--no-test-flag"] OptionOff
+
 unit_optionStatusToPleatOptionWithEnabled :: Assertion
 unit_optionStatusToPleatOptionWithEnabled = optionStatusToPleatOption Enabled "test" @?= (OptionOn "test")
 
@@ -68,12 +75,12 @@ unit_parsePromptSeparator = runParser parsePromptSeparator ["--prompt-separator"
 unit_parseConfig :: Assertion
 unit_parseConfig = runParser parseConfig [] $
   Config {
-            _pleatHostnameOption = OptionOn $ HostnameOption Nothing
-         ,  _pleatPathOption     = OptionOn $ PathOption $ defaultMaxPathLength
-         , _pleatGitOption       = OptionOn GitOption
-         , _pleatTimestampOption = OptionOn TimestampOption
-         , _pleatPrompt          = defaultPrompt
-         , _pleatPromptSeparator = defaultPromptSeparator
+            _pleatHostnameOverrideOption = OptionOn $ HostnameOption Nothing
+         ,  _pleatPathOption             = OptionOn $ PathOption $ defaultMaxPathLength
+         , _pleatGitOption               = OptionOn GitOption
+         , _pleatTimestampOption         = OptionOn TimestampOption
+         , _pleatPrompt                  = defaultPrompt
+         , _pleatPromptSeparator         = defaultPromptSeparator
          }
 
 unit_versionMod :: Assertion
@@ -128,9 +135,10 @@ runParser parserA args expected =
       (Success actual) -> actual @?= expected
       other            -> assertFailure $ "got error: " <> (show other)
 
-xrunParserWithFailure :: Show a => Parser a -> [String] -> Assertion
-xrunParserWithFailure parserA args =
+runParserWithFailure :: Show a => Parser a -> [String] -> String -> Assertion
+runParserWithFailure parserA args expectedError =
   let result = execParserPure defaultPrefs (info parserA $ header "some-header") args
   in case result of
       (Success actual) -> assertFailure $ "got success but expected an error: " <> (show actual)
-      _            -> pure ()
+      (Failure (ParserFailure errorF))      -> (maybe "-" show . unChunk . helpError . (\(h, _, _)  -> h) . errorF $ "whatever-whatever") @?= expectedError
+      (CompletionInvoked _)   -> assertFailure $ "got CompletionInvoked but expected an error"

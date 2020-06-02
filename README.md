@@ -51,18 +51,18 @@ If all goes according to plan you should see something like:
 ```
 pleat - bash prompt
 
-Usage: pleat [--no-hostname] [--hostname HOSTNAME] [--no-path]
+Usage: pleat ([--no-hostname] | [--hostname HOSTNAME]) [--no-path]
              [--max-path-length INT] [--no-git] [--no-timestamp]
              [--prompt PROMPT] [--prompt-separator SEP] [-v|--version]
   writes out a bash prompt with useful information
 
 Available options:
-  --no-hostname            turn off hostname display
+  --no-hostname            don't display hostname
   --hostname HOSTNAME      override hostname
-  --no-path                turn off path display
+  --no-path                don't display path
   --max-path-length INT    maximum length for the path displayed (default: 50)
-  --no-git                 turn off git display
-  --no-timestamp           turn off timestamp display
+  --no-git                 don't display git
+  --no-timestamp           don't display timestamp
   --prompt PROMPT          override prompt (default: "> ")
   --prompt-separator SEP   override prompt separator (default: ":")
   -v,--version             Show pleat version
@@ -76,6 +76,7 @@ Available options:
 
 - Bump version in package.yaml: X.Y.Z
 - make changes
+- build
 - commit changes
 - tag changes to match version: git tag 'vX.Y.Z'
 - push commit

@@ -13,6 +13,7 @@ module Commandline.CommandlineOptions
       ,  parseTimestampDisabled
       ,  parsePathDisabled
       ,  parseOptionStatus
+      ,  parseDisabledOrFail
       ,  parseGitOption
       ,  parsePleatHostnameOption
       ,  optionStatusToPleatOption
@@ -57,9 +58,6 @@ parseConfig =
     parsePrompt              <*>
     parsePromptSeparator
 
-parseHostnameDisabled :: Parser OptionStatus
-parseHostnameDisabled = parseOptionStatus "hostname"
-
 parseGitDisabled :: Parser OptionStatus
 parseGitDisabled = parseOptionStatus "git"
 
@@ -73,7 +71,7 @@ parseOptionStatus :: String -> Parser OptionStatus
 parseOptionStatus optionName =
   flag Enabled Disabled (
     long ("no-" <> optionName) <>
-    help ("turn off " <> optionName <> " display")
+    help ("don't display " <> optionName)
   )
 
 versionHelper :: Parser (a -> a)
@@ -94,12 +92,18 @@ parseTimestampOption = liftA2 optionStatusToPleatOption parseTimestampDisabled (
 parsePathOption :: Parser (PleatOption PathOption)
 parsePathOption = liftA2 optionStatusToPleatOption parsePathDisabled (PathOption <$> parseMaxPathLength)
 
-parsePleatHostnameOption :: Parser (PleatOption HostnameOption)
-parsePleatHostnameOption = liftA2 optionStatusToPleatOption parseHostnameDisabled (HostnameOption <$> parseHostname)
-
 optionStatusToPleatOption :: OptionStatus -> a -> PleatOption a
 optionStatusToPleatOption Enabled  = OptionOn
 optionStatusToPleatOption Disabled = const OptionOff
+
+parseHostnameDisabled :: Parser (PleatOption HostnameOption)
+parseHostnameDisabled = parseDisabledOrFail "hostname"
+
+parseDisabledOrFail :: String -> Parser (PleatOption a)
+parseDisabledOrFail optionName = flag' OptionOff (long ("no-" <> optionName) <> help ("don't display " <> optionName))
+
+parsePleatHostnameOption :: Parser (PleatOption HostnameOption)
+parsePleatHostnameOption = parseHostnameDisabled <|> fmap (OptionOn . HostnameOption) parseHostname
 
 parseHostname :: Parser (Maybe Hostname)
 parseHostname =
