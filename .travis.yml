@@ -12,12 +12,15 @@ cache:
 
 sudo: required
 
+services:
+- docker
+
 os:
 - linux
 - osx
 
 before_install:
-- bash auto/shellcheck
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then bash auto/shellcheck; fi
 - bash tools/install-stack.sh
 - bash tools/install-ghr.sh
 
