@@ -17,6 +17,7 @@ os:
 - osx
 
 before_install:
+- bash auto/shellcheck
 - bash tools/install-stack.sh
 - bash tools/install-ghr.sh
 
