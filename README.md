@@ -1,6 +1,6 @@
 # pleat
 
-Tired of wrangling Bash scripts to create my Bash prompt, I turned to the power of Haskell to make this more enjoyable. "Haskell your Bash" whenever possible.
+Your Bash prompt - but in Haskell! **Haskell your Bash** whenever possible.
 
 [![Build Status](https://travis-ci.org/ssanj/pleat.svg?branch=master)](https://travis-ci.org/ssanj/pleat) [![Latest Version](https://img.shields.io/github/v/release/ssanj/pleat)](https://github.com/ssanj/pleat/releases/latest)
 
@@ -42,11 +42,21 @@ export PROMPT_COMMAND=prompt_command
 source ~/.bash_prompt
 ```
 
-If all goes according to plan you should see something like:
-
-![Pleat](pleat.png)
-
 ## Using
+
+You can display all help information for pleat with:
+
+```
+pleat -h
+```
+
+or
+
+```
+pleat --help
+```
+
+which will yield all the options:
 
 ```
 pleat - bash prompt
@@ -71,6 +81,89 @@ Available options:
 --no-feature options take precedence over other options
 ```
 
+### Prompt components
+
+pleat has the following components:
+- Timestamp (current date and time)
+- User (logged in user)
+- Hostname (computer name)
+- Path (current working directory)
+- Git (Git information; See below)
+- Prompt suffix (string at the end of the prompt line)
+
+###  With defaults
+
+```
+pleat
+```
+
+which dumps out something like:
+
+![Pleat](pleat.png)
+
+### Hostname
+
+Displays the hostname of the computer.
+
+You can remove the **hostname** completely with `--no-hostname` or set it to a default value with `--hostname 'my-cool-hostname'` if you don't like the actual **hostname** of your computer.
+
+These options are mutually exclusive so you can't specify them together. If they
+are both omitted the actual hostname of the computer is used.
+
+### Path
+
+Displays the current working dictory
+
+Is the path getting you down? Remove it with `--no-path` or truncate the path if it's too long with `--max-path-length SIZE`.
+
+These are mutually exclusive. If they are both omitted the full path to the current directory will be used and truncated to a default length of 50 characters.
+
+### Git
+
+Displays Git information if the current directory is a Git repository:
+- Local branch name
+- Local modifications
+- Remote branch name
+- Pending commits not pushed to remote
+- Hash of the HEAD
+
+If you don't want Git information displayed, remove it with `--no-git`.
+
+### Timestamp
+
+Displays the current date and time.
+
+Remove the timestamp with `--no-timestamp`.
+
+### Prompt
+
+Displays the prompt suffix on the prompt line. The current default is '> '.
+
+You can set a custom prompt suffix with `--prompt 'your_cool_suffix'`.
+
+### Separator
+
+Displays the separator between the various components of the prompt. Defaults to ':'. Change it with `--prompt-separator 'your_prompt_separator'`.
+
+### Version
+
+Display the current version of pleat with:
+
+```
+pleat -v
+```
+
+or
+
+```
+pleat --version
+```
+
+which will give you the pleat version and git hash:
+
+```
+pleat version:0.2.0.5 githash:82ef44c19f1164ece4719d2e7bb8592f3b8f0169
+```
 
 ## Releasing
 
