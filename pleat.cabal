@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9db0271b00fdc91d2cbc0ae44867cebfdff13b54ee4d8b1d554018b98625a0df
+-- hash: 44fd5f3ef193b32b7e4a0675e4fb6dc246d4a0c4850ff5a22f3fd1dde6e0f811
 
 name:           pleat
-version:        0.2.0.6
+version:        0.2.0.7
 description:    Please see the README on GitHub at <https://github.com/ssanj/pleat#readme>
 homepage:       https://github.com/ssanj/pleat#readme
 bug-reports:    https://github.com/ssanj/pleat/issues
