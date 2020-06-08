@@ -59,12 +59,11 @@ pleat --help
 which will yield all the options:
 
 ```
-pleat - bash prompt
+pleat - Your Bash prompt in Haskell
 
-Usage: pleat ([--no-hostname] | [--hostname HOSTNAME]) [--no-path]
-             [--max-path-length INT] [--no-git] [--no-timestamp]
+Usage: pleat ([--no-hostname] | [--hostname HOSTNAME]) ([--no-path] |
+             [--max-path-length INT]) [--no-git] [--no-timestamp]
              [--prompt PROMPT] [--prompt-separator SEP] [-v|--version]
-  writes out a bash prompt with useful information
 
 Available options:
   --no-hostname            don't display hostname
@@ -78,18 +77,21 @@ Available options:
   -v,--version             Show pleat version
   -h,--help                Show this help text
 
---no-feature options take precedence over other options
+---
 ```
 
 ### Prompt components
 
 pleat has the following components:
-- Timestamp (current date and time)
-- User (logged in user)
-- Hostname (computer name)
-- Path (current working directory)
-- Git (Git information; See below)
-- Prompt suffix (string at the end of the prompt line)
+
+| Field | What is it? |
+|-------|-------------|
+| Timestamp | Current date and time                        |
+| User      | Logged in user                               |
+| Hostname  | Computer name                                |
+| Path      | Current working directory                    |
+| Git       | Git information; See below                   |
+| Prompt    | String at the end of the prompt line         |
 
 ###  With defaults
 

@@ -44,7 +44,10 @@ unit_parseTimestampDisabledWithoutDisabledFlag :: Assertion
 unit_parseTimestampDisabledWithoutDisabledFlag = runParser parseTimestampDisabled [] Enabled
 
 unit_parsePathDisabledWithDisabledFlag :: Assertion
-unit_parsePathDisabledWithDisabledFlag = runParser parsePathDisabled ["--no-path"] Disabled
+unit_parsePathDisabledWithDisabledFlag = runParser parsePathDisabled ["--no-path"] OptionOff
+
+unit_parsePathDisabledWithoutDisabledFlag :: Assertion
+unit_parsePathDisabledWithoutDisabledFlag = runParserWithFailure parsePathDisabled [] "Missing: --no-path"
 
 -- TODO: handlePleatDisableOption could be PBT tests
 unit_handlePleatDisableOptionWithDisabled :: Assertion

@@ -43,7 +43,8 @@ pleatInfo :: ParserInfo Config
 pleatInfo =
   info (parseConfig <**> versionHelper <**> helper) (
     fullDesc                                       <>
-    header ("pleat - Your Bash prompt in Haskell")
+    header ("pleat - Your Bash prompt in Haskell") <>
+    footer "---"
   )
 
 parseConfig :: Parser Config
@@ -61,9 +62,6 @@ parseGitDisabled = parseOptionStatus "git"
 
 parseTimestampDisabled :: Parser OptionStatus
 parseTimestampDisabled = parseOptionStatus "timestamp"
-
-parsePathDisabled :: Parser OptionStatus
-parsePathDisabled = parseOptionStatus "path"
 
 parseOptionStatus :: String -> Parser OptionStatus
 parseOptionStatus optionName =
@@ -88,11 +86,14 @@ parseTimestampOption :: Parser (PleatOption TimestampOption)
 parseTimestampOption = liftA2 optionStatusToPleatOption parseTimestampDisabled (pure TimestampOption)
 
 parsePathOption :: Parser (PleatOption PathOption)
-parsePathOption = liftA2 optionStatusToPleatOption parsePathDisabled (PathOption <$> parseMaxPathLength)
+parsePathOption = parsePathDisabled <|> fmap (OptionOn . PathOption)  parseMaxPathLength
 
 optionStatusToPleatOption :: OptionStatus -> a -> PleatOption a
 optionStatusToPleatOption Enabled  = OptionOn
 optionStatusToPleatOption Disabled = const OptionOff
+
+parsePathDisabled :: Parser (PleatOption PathOption)
+parsePathDisabled = parseDisabledOrFail "path"
 
 parseHostnameDisabled :: Parser (PleatOption HostnameOption)
 parseHostnameDisabled = parseDisabledOrFail "hostname"
