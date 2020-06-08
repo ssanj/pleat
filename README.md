@@ -59,11 +59,12 @@ pleat --help
 which will yield all the options:
 
 ```
-pleat - Your Bash prompt in Haskell
+pleat: 0.2.0.7 6d087c9a10c6344423837c018056241e4d605e1b
 
 Usage: pleat ([--no-hostname] | [--hostname HOSTNAME]) ([--no-path] |
              [--max-path-length INT]) [--no-git] [--no-timestamp]
              [--prompt PROMPT] [--prompt-separator SEP] [-v|--version]
+  Your Bash prompt in Haskell
 
 Available options:
   --no-hostname            don't display hostname

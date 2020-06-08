@@ -36,16 +36,25 @@ import qualified Data.Version as DV
 
 data OptionStatus = Enabled | Disabled deriving stock (Eq, Show)
 
+newtype PleatVersion = PleatVersion String deriving stock (Eq, Show)
+newtype PleatGitHash = PleatGitHash String deriving stock (Eq, Show)
+
+data VersionInfo = VersionInfo { pleatVersion :: PleatVersion, _pleatGitHash :: PleatGitHash } deriving stock (Eq, Show)
+
 parseArguments :: IO Config
 parseArguments = execParser pleatInfo
 
 pleatInfo :: ParserInfo Config
 pleatInfo =
   info (parseConfig <**> versionHelper <**> helper) (
-    fullDesc                                       <>
-    header ("pleat - Your Bash prompt in Haskell") <>
+    fullDesc                                 <>
+    header (headerVersionString versionInfo) <>
+    progDesc ("Your Bash prompt in Haskell") <>
     footer "---"
   )
+
+headerVersionString :: VersionInfo -> String
+headerVersionString (VersionInfo (PleatVersion v) (PleatGitHash h))  = "pleat: " <> v <>  " " <> h
 
 parseConfig :: Parser Config
 parseConfig =
@@ -72,12 +81,18 @@ parseOptionStatus optionName =
 
 versionHelper :: Parser (a -> a)
 versionHelper =
-  infoOption ("pleat version:" <> DV.showVersion version <>  " githash:" <> $(gitHash))
+  infoOption (versionString versionInfo)
              (
                 short 'v'                 <>
                 long "version"            <>
                 help "Show pleat version"
              )
+
+versionString :: VersionInfo -> String
+versionString (VersionInfo (PleatVersion v) (PleatGitHash h)) = "pleat version " <> v <>  " githash:" <> h
+
+versionInfo :: VersionInfo
+versionInfo = VersionInfo (PleatVersion $ DV.showVersion version) (PleatGitHash $(gitHash))
 
 parseGitOption :: Parser (PleatOption GitOption)
 parseGitOption = liftA2 optionStatusToPleatOption parseGitDisabled (pure GitOption)
