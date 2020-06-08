@@ -42,10 +42,8 @@ parseArguments = execParser pleatInfo
 pleatInfo :: ParserInfo Config
 pleatInfo =
   info (parseConfig <**> versionHelper <**> helper) (
-    fullDesc                                                         <>
-    progDesc "writes out a bash prompt with useful information"      <>
-    header ("pleat - bash prompt")                                   <>
-    footer "--no-feature options take precedence over other options"
+    fullDesc                                       <>
+    header ("pleat - Your Bash prompt in Haskell")
   )
 
 parseConfig :: Parser Config
