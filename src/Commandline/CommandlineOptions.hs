@@ -42,7 +42,10 @@ newtype PleatGitHash = PleatGitHash String deriving stock (Eq, Show)
 data VersionInfo = VersionInfo { pleatVersion :: PleatVersion, _pleatGitHash :: PleatGitHash } deriving stock (Eq, Show)
 
 parseArguments :: IO Config
-parseArguments = execParser pleatInfo
+parseArguments = customExecParser helpfulPrefs pleatInfo
+                  where
+                    helpfulPrefs :: ParserPrefs
+                    helpfulPrefs = defaultPrefs { prefShowHelpOnError = True, prefShowHelpOnEmpty = True }
 
 pleatInfo :: ParserInfo Config
 pleatInfo =
