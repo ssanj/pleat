@@ -77,14 +77,15 @@ unit_parsePromptSeparator = runParser parsePromptSeparator ["--prompt-separator"
 
 unit_parseConfig :: Assertion
 unit_parseConfig = runParser parseConfig [] $
-  Config {
-            _pleatHostnameOverrideOption = OptionOn $ HostnameOption Nothing
-         ,  _pleatPathOption             = OptionOn $ PathOption $ defaultMaxPathLength
-         , _pleatGitOption               = OptionOn GitOption
-         , _pleatTimestampOption         = OptionOn TimestampOption
-         , _pleatPrompt                  = defaultPrompt
-         , _pleatPromptSeparator         = defaultPromptSeparator
-         }
+  PleatConfigCommand $
+    Config {
+       _pleatHostnameOverrideOption = OptionOn $ HostnameOption Nothing
+    ,  _pleatPathOption             = OptionOn $ PathOption $ defaultMaxPathLength
+    , _pleatGitOption               = OptionOn GitOption
+    , _pleatTimestampOption         = OptionOn TimestampOption
+    , _pleatPrompt                  = defaultPrompt
+    , _pleatPromptSeparator         = defaultPromptSeparator
+    }
 
 unit_versionMod :: Assertion
 unit_versionMod =
@@ -109,26 +110,35 @@ unit_promptSeparatorMod =
 -- TODO: Add visibility
 assertParserMod :: Parser a -> [OptName] -> HelpText -> MetaVar -> (Maybe DefaultVal) -> ModName -> Assertion
 assertParserMod parserOfA expectedOptionNames (HelpText expectedHelpText) (MetaVar expectedMetaVar) maybeDefaultVal (ModName modName) =
-  case parserOfA of
-    (AltP (OptP ((Option (OptReader options _ _) optProperties))) _) ->
-      do
-        let optionNameError = "did not contain all option names, actual: "
-                              <> (show options)
-                              <> ", expected: "
-                              <> (show expectedOptionNames)
-        assertBool optionNameError $ all (`elem` options) expectedOptionNames
-        maybe (assertFailure "invalid help text") (\y -> (show y) @?= expectedHelpText) (unChunk . propHelp $ optProperties)
-        (propMetaVar optProperties) @?= expectedMetaVar
-        case (propShowDefault optProperties, maybeDefaultVal) of
-          (Just actualDefaultProp, Just expectedDefaultVal) -> actualDefaultProp @?= _defaultVal expectedDefaultVal
-          (Nothing,                Nothing)                 -> pure ()
-          (actualDefaultProp,      expectedDefaultVal)      -> assertFailure $
-                                                                "invalid default value, actual: "
-                                                                <> (show actualDefaultProp)
-                                                                <> ", expected: "
-                                                                <> (show $ fmap _defaultVal expectedDefaultVal)
-    _ -> assertFailure $ "invalid Mods for " <> modName
+  let verifyParserMod :: [OptName] -> OptProperties -> Assertion
+      verifyParserMod options optProperties =
+        do
+          let optionNameError = "did not contain all option names, actual: "
+                                <> (show options)
+                                <> ", expected: "
+                                <> (show expectedOptionNames)
+          assertBool optionNameError $ all (`elem` options) expectedOptionNames
+          maybe (assertFailure "invalid help text") (\y -> (show y) @?= expectedHelpText) (unChunk . propHelp $ optProperties)
+          (propMetaVar optProperties) @?= expectedMetaVar
+          case (propShowDefault optProperties, maybeDefaultVal) of
+            (Just actualDefaultProp, Just expectedDefaultVal) -> actualDefaultProp @?= _defaultVal expectedDefaultVal
+            (Nothing,                Nothing)                 -> pure ()
+            (actualDefaultProp,      expectedDefaultVal)      -> assertFailure $
+                                                                  "invalid default value, actual: "
+                                                                  <> (show actualDefaultProp)
+                                                                  <> ", expected: "
+                                                                  <> (show $ fmap _defaultVal expectedDefaultVal)
+  in case parserOfA of
+    (AltP (OptP (Option (OptReader options _ _) optProperties)) _) -> verifyParserMod options optProperties
+    (AltP (OptP (Option (FlagReader options _)  optProperties)) _) -> verifyParserMod options optProperties
+    _ -> assertFailure $ "xinvalid Mods for " <> modName
 
+
+  -- = NilP (Maybe a)
+  -- | OptP (Option a)
+  -- | forall x . MultP (Parser (x -> a)) (Parser x)
+  -- | AltP (Parser a) (Parser a)
+  -- | forall x . BindP (Parser x) (x -> Parser a)
 
 -- TODO: how can I test the various Info options for the Parser like long, help and metavar
 runParser :: (Show a, Eq a) => Parser a -> [String] -> a -> Assertion

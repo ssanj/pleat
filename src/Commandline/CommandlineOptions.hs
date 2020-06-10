@@ -5,6 +5,7 @@ module Commandline.CommandlineOptions
       (
          -- Data types
          OptionStatus(..)
+      ,  PleatCommand(..)
          -- Functions
       ,  pleatInfo
       ,  parseConfig
@@ -23,6 +24,8 @@ module Commandline.CommandlineOptions
       ,  parsePrompt
       ,  parsePromptSeparator
       ,  versionHelper
+      ,  versionInfo
+      ,  versionString
       ) where
 
 import Options.Applicative
@@ -36,20 +39,21 @@ import qualified Data.Version as DV
 
 data OptionStatus = Enabled | Disabled deriving stock (Eq, Show)
 
+data PleatCommand = PleatConfigCommand Config | PleatVersionCommand deriving stock (Eq, Show)
 newtype PleatVersion = PleatVersion String deriving stock (Eq, Show)
 newtype PleatGitHash = PleatGitHash String deriving stock (Eq, Show)
 
 data VersionInfo = VersionInfo { pleatVersion :: PleatVersion, _pleatGitHash :: PleatGitHash } deriving stock (Eq, Show)
 
-parseArguments :: IO Config
+parseArguments :: IO PleatCommand
 parseArguments = customExecParser helpfulPrefs pleatInfo
                   where
                     helpfulPrefs :: ParserPrefs
                     helpfulPrefs = defaultPrefs { prefShowHelpOnError = True, prefShowHelpOnEmpty = True }
 
-pleatInfo :: ParserInfo Config
+pleatInfo :: ParserInfo PleatCommand
 pleatInfo =
-  info (parseConfig <**> versionHelper <**> helper) (
+  info ((versionHelper <|> parseConfig) <**> helper) (
     fullDesc                                 <>
     header (headerVersionString versionInfo) <>
     progDesc ("Your Bash prompt in Haskell") <>
@@ -59,15 +63,16 @@ pleatInfo =
 headerVersionString :: VersionInfo -> String
 headerVersionString (VersionInfo (PleatVersion v) (PleatGitHash h))  = "pleat: " <> v <>  " " <> h
 
-parseConfig :: Parser Config
+parseConfig :: Parser PleatCommand
 parseConfig =
-  Config <$>
-    parsePleatHostnameOption <*>
-    parsePathOption          <*>
-    parseGitOption           <*>
-    parseTimestampOption     <*>
-    parsePrompt              <*>
-    parsePromptSeparator
+  let config = Config <$>
+                parsePleatHostnameOption <*>
+                parsePathOption          <*>
+                parseGitOption           <*>
+                parseTimestampOption     <*>
+                parsePrompt              <*>
+                parsePromptSeparator
+  in PleatConfigCommand <$> config
 
 parseGitDisabled :: Parser OptionStatus
 parseGitDisabled = parseOptionStatus "git"
@@ -82,14 +87,13 @@ parseOptionStatus optionName =
     help ("don't display " <> optionName)
   )
 
-versionHelper :: Parser (a -> a)
+versionHelper :: Parser PleatCommand
 versionHelper =
-  infoOption (versionString versionInfo)
-             (
-                short 'v'                 <>
-                long "version"            <>
-                help "Show pleat version"
-             )
+  flag' (PleatVersionCommand) (
+    short 'v'                 <>
+    long "version"            <>
+    help "Show pleat version"
+  )
 
 versionString :: VersionInfo -> String
 versionString (VersionInfo (PleatVersion v) (PleatGitHash h)) = "pleat version " <> v <>  " githash:" <> h

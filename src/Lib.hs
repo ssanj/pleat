@@ -24,8 +24,10 @@ import Feature.Model (PromptBehaviour(..))
 import Control.Applicative ((<|>), liftA2)
 import Data.Maybe          (catMaybes)
 import Data.List           (intercalate)
+import Commandline.CommandlineOptions (PleatCommand(..), versionInfo, versionString)
 
 import Config
+
 
 -- TODO: extract prompt section separator - don't default to ":"
 promptBehaviour :: Monad m => PromptBehaviour m -> Config -> m String
@@ -48,18 +50,20 @@ promptBehaviour behaviour config = do
                                                           ]
   pure fullPrompt
 
-prompt :: Config -> IO String
-prompt config = promptBehaviour behaviour config
-                where
-                  behaviour :: PromptBehaviour IO
-                  behaviour = PromptBehaviour
-                                F.processTimestamp
-                                F.processUser
-                                F.processHostname
-                                F.processPath
-                                F.processGitRepo
-                                F.processPromptSuffix
-                                F.processPromptSeparator
+prompt :: PleatCommand -> IO String
+prompt PleatVersionCommand = pure $ versionString versionInfo
+prompt (PleatConfigCommand config) =
+  promptBehaviour behaviour config
+    where
+      behaviour :: PromptBehaviour IO
+      behaviour = PromptBehaviour
+                    F.processTimestamp
+                    F.processUser
+                    F.processHostname
+                    F.processPath
+                    F.processGitRepo
+                    F.processPromptSuffix
+                    F.processPromptSeparator
 
 data Promptable = LocalTime F.DateTime
                 | Login F.User
