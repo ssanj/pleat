@@ -1,7 +1,6 @@
 module Main where
 
-import Lib (prompt)
-import Commandline.CommandlineOptions (parseArguments)
+import Pleat
 
 main :: IO ()
 main = parseArguments >>= prompt >>= putStrLn

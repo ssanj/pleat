@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Lib
+module Program
        (
           -- Data types
           Promptable(..)
