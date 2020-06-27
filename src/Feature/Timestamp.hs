@@ -2,16 +2,13 @@
 
 module Feature.Timestamp
        (
-          -- Data types
-          DateTime(..)
           -- Functions
-       ,  processTimestamp
+          processTimestamp
        ) where
 
 import qualified Api as A
 import Config
-
-newtype DateTime = DateTime { _dateTime :: String } deriving stock (Eq, Show)
+import Feature.Model (DateTime(..))
 
 processTimestamp :: Config -> IO (Maybe DateTime)
 processTimestamp Config { _pleatTimestampOption = OptionOn TimestampOption } = fmap processTime <$> A.getLocalTime

@@ -2,18 +2,15 @@
 
 module Feature.Hostname
        (
-          -- Data types
-          Hostname(..)
           -- Functions
-       ,  processHostname
+          processHostname
        ) where
 
 import qualified Api as A
 
 import Config (Config(..), HostnameOption(..), PleatOption(..))
 import qualified Config as C
-
-newtype Hostname = Hostname { _hostname :: String } deriving stock (Eq, Show)
+import Feature.Model (Hostname(..))
 
 processHostname :: Config -> IO (Maybe Hostname)
 processHostname Config { _pleatHostnameOverrideOption = OptionOn (HostnameOption (Just (C.Hostname hostnameOverride))) } =

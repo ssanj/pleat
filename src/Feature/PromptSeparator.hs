@@ -2,18 +2,14 @@
 
 module Feature.PromptSeparator
        (
-          -- Data types
-          PromptSeparator(..)
           -- Functions
-       ,  processPromptSeparator
+          processPromptSeparator
        ) where
 
 import qualified Config as C
 
 import Config (Config(..))
-
-
-newtype PromptSeparator = PromptSeparator { _promptSeparator :: String } deriving stock (Eq, Show)
+import Feature.Model (PromptSeparator(..))
 
 processPromptSeparator :: Config -> PromptSeparator
 processPromptSeparator = PromptSeparator . C._promptSeparator . _pleatPromptSeparator

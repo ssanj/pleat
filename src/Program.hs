@@ -12,14 +12,8 @@ module Program
        ,  combinePromptables
        ) where
 
-import qualified Feature.Git             as F
-import qualified Feature.Timestamp       as F
-import qualified Feature.Hostname        as F
-import qualified Feature.Path            as F
-import qualified Feature.User            as F
-import qualified Feature.Prompt          as F
-import qualified Feature.PromptSeparator as F
-import Feature.Model (PromptBehaviour(..))
+
+import qualified Feature as F
 
 import Control.Applicative ((<|>), liftA2)
 import Data.Maybe          (catMaybes)
@@ -30,16 +24,16 @@ import Config
 
 
 -- TODO: extract prompt section separator - don't default to ":"
-promptBehaviour :: Monad m => PromptBehaviour m -> Config -> m String
+promptBehaviour :: Monad m => F.PromptBehaviour m -> Config -> m String
 promptBehaviour behaviour config = do
-  localTime           <- _processTimestamp   behaviour $ config
-  user                <- _processUser        behaviour
-  hostname            <- _processHostname    behaviour $ config
-  path                <- _processPath        behaviour $ config
-  gitBranches         <- _processGitRepo     behaviour $ config
-  let promptSuffix    = _processPromptSuffix behaviour $ config
+  localTime           <- F._processTimestamp   behaviour $ config
+  user                <- F._processUser        behaviour
+  hostname            <- F._processHostname    behaviour $ config
+  path                <- F._processPath        behaviour $ config
+  gitBranches         <- F._processGitRepo     behaviour $ config
+  let promptSuffix    = F._processPromptSuffix behaviour $ config
       loginAtMachine  = mkLoginAtMachine user hostname
-      promptSeparator = F._promptSeparator . _processPromptSeparator behaviour $ config
+      promptSeparator = F._promptSeparator . F._processPromptSeparator behaviour $ config
       fullPrompt      =
         combinePromptables showPromptable promptSeparator [
                                                              LocalTime <$> localTime
@@ -55,8 +49,8 @@ prompt PleatVersionCommand = pure $ versionString versionInfo
 prompt (PleatConfigCommand config) =
   promptBehaviour behaviour config
     where
-      behaviour :: PromptBehaviour IO
-      behaviour = PromptBehaviour
+      behaviour :: F.PromptBehaviour IO
+      behaviour = F.PromptBehaviour
                     F.processTimestamp
                     F.processUser
                     F.processHostname

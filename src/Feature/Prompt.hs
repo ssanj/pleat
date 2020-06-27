@@ -2,18 +2,14 @@
 
 module Feature.Prompt
        (
-          -- Data types
-          Prompt(..)
           -- Functions
-       ,  processPromptSuffix
+          processPromptSuffix
        ) where
 
 import qualified Config as C
 
 import Config (Config(..))
-
-
-newtype Prompt = Prompt { _prompt :: String } deriving stock (Eq, Show)
+import Feature.Model (Prompt(..))
 
 processPromptSuffix :: Config -> Maybe Prompt
 processPromptSuffix = Just. Prompt . C._prompt . _pleatPrompt

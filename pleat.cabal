@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9419635a6da72b5892025ef9dbdce96cde7c85abfb144bdc9e23f7fe1e2016fd
+-- hash: ca8ea4dcf374740831ba6cd4bfbcdb42fba4492d54b5838fb7339b5b36fa7299
 
 name:           pleat
 version:        0.2.0.9
@@ -33,6 +33,7 @@ library
       Config
       Config.Defaults
       Config.Model
+      Feature
       Feature.Git
       Feature.Hostname
       Feature.Model

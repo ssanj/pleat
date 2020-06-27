@@ -3,19 +3,15 @@
 
 module Feature.Git
        (
-          -- Data types
-          GitBranchModification(..)
           -- Functions
-       ,  processGitRepo
+          processGitRepo
        ) where
 
 import qualified Api as A
 import qualified Format.GitBranch as GF
 
 import Config
-
-data GitBranchModification = 
-  GitBranchModification { _gitBranch :: String, _gitModification :: String } deriving stock (Eq, Show)
+import Feature.Model (GitBranchModification(..))
 
 processGitRepo :: Config -> IO (Maybe GitBranchModification)
 processGitRepo Config {_pleatGitOption = OptionOn GitOption } = do

@@ -2,15 +2,12 @@
 
 module Feature.User
        (
-          -- Data types
-          User(..)
           -- Functions
-       ,  processUser
+          processUser
        ) where
 
 import qualified Api as A
-
-newtype User = User { _user :: String } deriving stock (Eq, Show)
+import Feature.Model (User(..))
 
 processUser :: IO (Maybe User)
 processUser =
