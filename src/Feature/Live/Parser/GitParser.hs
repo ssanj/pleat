@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Parser.GitParser
+module Feature.Live.Parser.GitParser
        (
           -- Data types
           Parser

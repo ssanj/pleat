@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ab2af6b19ac6fb1a7f8f5c151bafdeb49ca14e1f49709c69fd7672671dd93bb8
+-- hash: b1fff031a54bd71c385158a3425cde00a9b9fa82dc0075aea859fd7b4a93d9f0
 
 name:           pleat
 version:        0.2.0.9
@@ -43,13 +43,13 @@ library
       Feature.Live.Internal.Safe
       Feature.Live.Internal.Terminal
       Feature.Live.Internal.Time
+      Feature.Live.Parser.GitParser
       Feature.Live.Path
       Feature.Live.Prompt
       Feature.Live.PromptSeparator
       Feature.Live.Timestamp
       Feature.Live.User
       Feature.Model
-      Parser.GitParser
       Pleat
       Program
   other-modules:
@@ -88,7 +88,7 @@ test-suite pleat-test
   other-modules:
       Commandline.CommandlineOptionsSpec
       Feature.Live.Format.GitBranchSpec
-      Parser.GitParserSpec
+      Feature.Live.Parser.GitParserSpec
       ProgramPromptBehaviourSpec
       ProgramSpec
       Paths_pleat
