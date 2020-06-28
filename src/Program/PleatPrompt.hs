@@ -1,9 +1,7 @@
 module Program.PleatPrompt
        (
-          -- Data types
-          Promptable(..)
           -- Functions
-       ,  prompt
+          prompt
        ,  promptBehaviour
        ,  showPromptable
        ,  mkLoginAtMachine
@@ -55,6 +53,14 @@ prompt (PleatConfigCommand config) =
                     F.processPromptSuffix
                     F.processPromptSeparator
 
+showPromptable :: Promptable -> String
+showPromptable (LocalTime (F.DateTime dateTime))                    = dateTime
+showPromptable (Login (F.User user))                                = user
+showPromptable (Machine (F.Hostname hostname))                      = hostname
+showPromptable (LoginAtMachine (F.User user) (F.Hostname hostname)) = (user <> "@" <> hostname)
+showPromptable (CWD (F.Path path))                                  = path
+showPromptable (GitInfo (F.GitBranchModification branch modified))  = (branch <> modified)
+showPromptable (PromptSuffix (F.Prompt suffix))                     = suffix
 
 mkLoginAtMachine :: Maybe F.User -> Maybe F.Hostname -> Maybe Promptable
 mkLoginAtMachine user hostname = (liftA2 LoginAtMachine user hostname) <|> (Login <$> user) <|> (Machine <$> hostname)
