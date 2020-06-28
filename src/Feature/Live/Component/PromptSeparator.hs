@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Live.PromptSeparator
+module Feature.Live.Component.PromptSeparator
        (
           -- Functions
           processPromptSeparator

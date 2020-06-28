@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Live.Hostname
+module Feature.Live.Component.Hostname
        (
           -- Functions
           processHostname

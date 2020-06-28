@@ -1,7 +1,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Live.Git
+module Feature.Live.Component.Git
        (
           -- Functions
           processGitRepo

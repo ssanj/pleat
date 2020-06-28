@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Live.User
+module Feature.Live.Component.User
        (
           -- Functions
           processUser

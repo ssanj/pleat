@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Live.Path
+module Feature.Live.Component.Path
        (
           -- Functions
           processPath

@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Live.Timestamp
+module Feature.Live.Component.Timestamp
        (
           -- Functions
           processTimestamp
