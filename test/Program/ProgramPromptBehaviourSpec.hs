@@ -1,5 +1,5 @@
 
-module ProgramPromptBehaviourSpec where
+module Program.ProgramPromptBehaviourSpec where
 
 import Test.Tasty.HUnit      ((@?=), Assertion)
 import Data.Functor.Identity (Identity(..))

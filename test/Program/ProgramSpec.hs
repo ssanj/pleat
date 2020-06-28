@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module ProgramSpec where
+module Program.ProgramSpec where
 
 import Test.Tasty.HUnit ((@?=), Assertion)
 import Data.Maybe       (catMaybes)
