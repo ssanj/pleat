@@ -5,7 +5,7 @@ module Feature.Live.Parser.GitParserSpec where
 import Test.Tasty.HUnit                (Assertion, assertFailure, (@?=))
 import Text.Parsec                     (parse, option)
 
-import Feature.Live.Parser.GitParser
+import Feature.Live.Parser
 
 unit_parseWithLocalBranch :: Assertion
 unit_parseWithLocalBranch =

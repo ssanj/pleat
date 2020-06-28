@@ -13,7 +13,7 @@ module Feature.Live.Format.GitBranch
        ,  formatGitBranch
        ) where
 
-import qualified Feature.Live.Parser.GitParser     as Git
+import qualified Feature.Live.Parser               as Git
 import qualified Feature.Live.Internal.BashColours as Colour
 
 import Data.List   (isPrefixOf)

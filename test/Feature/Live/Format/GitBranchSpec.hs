@@ -2,7 +2,7 @@
 
 module Feature.Live.Format.GitBranchSpec where
 
-import qualified Feature.Live.Parser.GitParser as Git
+import qualified Feature.Live.Parser as Git
 
 import Test.Tasty.HUnit                ((@?=), Assertion)
 
