@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Format.GitBranch
+module Feature.Live.Format.GitBranch
        (
           -- Data Types
           GitBranchType(..)
@@ -13,8 +13,8 @@ module Format.GitBranch
        ,  formatGitBranch
        ) where
 
-import qualified Parser.GitParser     as Git
-import qualified Internal.BashColours as Colour
+import qualified Parser.GitParser                  as Git
+import qualified Feature.Live.Internal.BashColours as Colour
 
 import Data.List   (isPrefixOf)
 import Text.Parsec (parse)

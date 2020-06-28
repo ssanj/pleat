@@ -1,14 +1,14 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Git
+module Feature.Live.Git
        (
           -- Functions
           processGitRepo
        ) where
 
-import qualified Api as A
-import qualified Format.GitBranch as GF
+import qualified Feature.Live.Internal         as A
+import qualified Feature.Live.Format.GitBranch as GF
 
 import Config
 import Feature.Model (GitBranchModification(..))

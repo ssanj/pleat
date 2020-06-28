@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies  #-}
 
-module Internal.Time
+module Feature.Live.Internal.Time
        (
           -- Functions
           getLocalTime
@@ -11,13 +11,13 @@ module Internal.Time
 import qualified Data.Thyme           as T
 import qualified Data.Thyme.Time.Core as T
 
-import Internal.Safe (ignoringError)
-import System.Locale (defaultTimeLocale)
+import Feature.Live.Internal.Safe (ignoringError)
+import System.Locale              (defaultTimeLocale)
 
-newtype LocalTime = LocalTime String deriving stock Show 
+newtype LocalTime = LocalTime String deriving stock Show
 
 getLocalTime :: IO (Maybe LocalTime)
-getLocalTime = 
+getLocalTime =
   let localTime = T.utcToLocalTime <$> T.getCurrentTimeZone <*> T.getCurrentTime
   in ignoringError $ LocalTime . localTimeString <$> localTime
 

@@ -1,13 +1,13 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Path
+module Feature.Live.Path
        (
           -- Functions
           processPath
        ) where
 
-import qualified Api         as A
-import qualified Format.Path as PF
+import qualified Feature.Live.Internal    as A
+import qualified Feature.Live.Format.Path as PF
 
 import Config
 import Feature.Model (Path(..))

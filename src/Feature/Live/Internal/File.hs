@@ -1,7 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE DerivingStrategies  #-}
 
-module Internal.File
+module Feature.Live.Internal.File
        (
           -- Functions
           getCurrentDirectory
@@ -17,11 +17,11 @@ import qualified System.Environment as E
 import qualified System.Directory   as D
 import qualified Network.HostName   as N
 
-import Internal.Safe (ignoringError)
-import Config        (Hostname(..))
+import Feature.Live.Internal.Safe (ignoringError)
+import Config                     (Hostname(..))
 
-newtype CurrentDirectory = CurrentDirectory String deriving stock Show 
-newtype User = User String deriving stock Show 
+newtype CurrentDirectory = CurrentDirectory String deriving stock Show
+newtype User = User String deriving stock Show
 
 getCurrentDirectory  :: IO (Maybe CurrentDirectory)
 getCurrentDirectory = ignoringError (CurrentDirectory <$> D.getCurrentDirectory)

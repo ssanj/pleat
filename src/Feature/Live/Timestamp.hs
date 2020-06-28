@@ -1,12 +1,12 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Timestamp
+module Feature.Live.Timestamp
        (
           -- Functions
           processTimestamp
        ) where
 
-import qualified Api as A
+import qualified Feature.Live.Internal as A
 import Config
 import Feature.Model (DateTime(..))
 

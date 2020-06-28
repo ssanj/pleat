@@ -1,12 +1,12 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.User
+module Feature.Live.User
        (
           -- Functions
           processUser
        ) where
 
-import qualified Api as A
+import qualified Feature.Live.Internal as A
 import Feature.Model (User(..))
 
 processUser :: IO (Maybe User)

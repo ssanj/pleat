@@ -1,12 +1,12 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Hostname
+module Feature.Live.Hostname
        (
           -- Functions
           processHostname
        ) where
 
-import qualified Api as A
+import qualified Feature.Live.Internal as A
 
 import Config (Config(..), HostnameOption(..), PleatOption(..))
 import qualified Config as C

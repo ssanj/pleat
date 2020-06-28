@@ -1,20 +1,20 @@
 module Feature
        (
           module Feature.Model
-       ,  module Feature.Git
-       ,  module Feature.Timestamp
-       ,  module Feature.Hostname
-       ,  module Feature.Path
-       ,  module Feature.User
-       ,  module Feature.Prompt
-       ,  module Feature.PromptSeparator
+       ,  module Feature.Live.Git
+       ,  module Feature.Live.Timestamp
+       ,  module Feature.Live.Hostname
+       ,  module Feature.Live.Path
+       ,  module Feature.Live.User
+       ,  module Feature.Live.Prompt
+       ,  module Feature.Live.PromptSeparator
        ) where
 
 import Feature.Model
-import Feature.Git
-import Feature.Timestamp
-import Feature.Hostname
-import Feature.Path
-import Feature.User
-import Feature.Prompt
-import Feature.PromptSeparator
+import Feature.Live.Git
+import Feature.Live.Timestamp
+import Feature.Live.Hostname
+import Feature.Live.Path
+import Feature.Live.User
+import Feature.Live.Prompt
+import Feature.Live.PromptSeparator

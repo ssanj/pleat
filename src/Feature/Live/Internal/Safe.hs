@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Internal.Safe (ignoringError) where
+module Feature.Live.Internal.Safe (ignoringError) where
 
 import Control.Exception (catch)
 

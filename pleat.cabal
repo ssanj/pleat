@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ca8ea4dcf374740831ba6cd4bfbcdb42fba4492d54b5838fb7339b5b36fa7299
+-- hash: ab2af6b19ac6fb1a7f8f5c151bafdeb49ca14e1f49709c69fd7672671dd93bb8
 
 name:           pleat
 version:        0.2.0.9
@@ -27,28 +27,28 @@ source-repository head
 
 library
   exposed-modules:
-      Api
       Commandline.CommandlineOptions
       Commandline.Model
       Config
       Config.Defaults
       Config.Model
       Feature
-      Feature.Git
-      Feature.Hostname
+      Feature.Live.Format.GitBranch
+      Feature.Live.Format.Path
+      Feature.Live.Git
+      Feature.Live.Hostname
+      Feature.Live.Internal
+      Feature.Live.Internal.BashColours
+      Feature.Live.Internal.File
+      Feature.Live.Internal.Safe
+      Feature.Live.Internal.Terminal
+      Feature.Live.Internal.Time
+      Feature.Live.Path
+      Feature.Live.Prompt
+      Feature.Live.PromptSeparator
+      Feature.Live.Timestamp
+      Feature.Live.User
       Feature.Model
-      Feature.Path
-      Feature.Prompt
-      Feature.PromptSeparator
-      Feature.Timestamp
-      Feature.User
-      Format.GitBranch
-      Format.Path
-      Internal.BashColours
-      Internal.File
-      Internal.Safe
-      Internal.Terminal
-      Internal.Time
       Parser.GitParser
       Pleat
       Program
@@ -87,7 +87,7 @@ test-suite pleat-test
   main-is: Driver.hs
   other-modules:
       Commandline.CommandlineOptionsSpec
-      Format.GitBranchSpec
+      Feature.Live.Format.GitBranchSpec
       Parser.GitParserSpec
       ProgramPromptBehaviourSpec
       ProgramSpec

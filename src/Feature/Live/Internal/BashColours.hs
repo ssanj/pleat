@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Internal.BashColours
+module Feature.Live.Internal.BashColours
        (
           -- Functions
           cyan

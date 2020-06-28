@@ -1,4 +1,4 @@
-module Internal.Terminal
+module Feature.Live.Internal.Terminal
        (
          -- Functions
          gitStatusShort

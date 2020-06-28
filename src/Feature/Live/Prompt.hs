@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 
-module Feature.Prompt
+module Feature.Live.Prompt
        (
           -- Functions
           processPromptSuffix

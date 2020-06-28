@@ -15,16 +15,7 @@ module Feature.Model
        ) where
 
 import Data.Kind (Type)
-
--- import qualified Feature.Git             as F
--- import qualified Feature.Timestamp       as F
--- import qualified Feature.Hostname        as F
--- import qualified Feature.Path            as F
--- import qualified Feature.User            as F
--- import qualified Feature.Prompt          as F
--- import qualified Feature.PromptSeparator as F
-
-import Config (Config)
+import Config    (Config)
 
 data GitBranchModification =
   GitBranchModification { _gitBranch :: String, _gitModification :: String } deriving stock (Eq, Show)
