@@ -1,4 +1,4 @@
-module Feature
+module Feature.Feature
        (
           module Feature.Model
        ,  module Feature.Live.Git

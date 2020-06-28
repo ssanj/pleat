@@ -1,4 +1,4 @@
-module Program
+module Program.Program
        (
           -- Module types
           module Program.Model

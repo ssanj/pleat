@@ -12,9 +12,9 @@ import qualified Hedgehog.Range        as Range
 import qualified Data.List             as L
 import qualified Data.Foldable         as F
 
-import qualified Feature as F
+import qualified Feature.Feature       as F
 
-import Program
+import Program.Program
 
 hprop_mkLoginAtMachine_loginAndMachine :: H.Property
 hprop_mkLoginAtMachine_loginAndMachine =

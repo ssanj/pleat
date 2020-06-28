@@ -10,7 +10,7 @@ module Program.PleatPrompt
        ,  combinePromptables
        ) where
 
-import qualified Feature as F
+import qualified Feature.Feature as F
 
 import Control.Applicative ((<|>), liftA2)
 import Data.Maybe          (catMaybes)

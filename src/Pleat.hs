@@ -5,5 +5,5 @@ module Pleat
        ,  parseArguments
        ) where
 
-import Program (prompt)
-import Commandline.CommandlineOptions (parseArguments)
+import Program.Program         (prompt)
+import Commandline.Commandline (parseArguments)

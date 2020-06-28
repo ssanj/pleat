@@ -9,7 +9,7 @@ module Program.Model
        ,  showPromptable
        ) where
 
-import qualified Feature as F
+import qualified Feature.Feature as F
 
 data Promptable = LocalTime F.DateTime
                 | Login F.User

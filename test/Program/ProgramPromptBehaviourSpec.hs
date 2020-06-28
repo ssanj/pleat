@@ -8,8 +8,8 @@ import Data.Functor.Identity (Identity(..))
 -- import qualified Hedgehog.Gen          as Gen
 -- import qualified Hedgehog.Range        as Range
 
-import qualified Feature as F
-import Program
+import qualified Feature.Feature as F
+import Program.Program
 
 unit_promptBehaviourAllFeatures :: Assertion
 unit_promptBehaviourAllFeatures =
