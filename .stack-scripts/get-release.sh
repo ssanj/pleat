@@ -2,7 +2,7 @@
 
 set -Eeuo pipefail
 
-PROG=$(basename $0)
+PROG=$(basename "$0")
 
 if [[ "$#" -lt 2 ]]; then
   echo "usage: $PROG REPO OS"
@@ -20,7 +20,7 @@ if [[ "$OS" !=  'osx' ]] && [[ "$OS" != 'linux' ]]; then
   exit 1
 fi
 
-VERSION=$(curl -s https://api.github.com/repos/ssanj/$REPO/releases/latest | jq '.tag_name' | sed s/\"//g)
+VERSION=$(curl -s "https://api.github.com/repos/ssanj/$REPO/releases/latest" | jq '.tag_name' | sed s/\"//g)
 echo "Downloading version: $VERSION"
 FILE_NAME="$REPO-$VERSION-$OS.tar.gz"
 DOWNLOAD_LOCATION="$HOME/Downloads/$FILE_NAME"
