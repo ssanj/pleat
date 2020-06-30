@@ -170,6 +170,13 @@ pleat version:0.2.0.5 githash:82ef44c19f1164ece4719d2e7bb8592f3b8f0169
 
 ## Releasing
 
+### Using release script
+
+- Commit all changes
+- run `release`
+
+### Manually
+
 - Bump version in package.yaml: X.Y.Z
 - make changes
 - build
