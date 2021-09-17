@@ -17,20 +17,22 @@ module Feature.Model
 import Data.Kind (Type)
 import Config    (Config)
 
+import qualified Data.Text as T
+
 data GitBranchModification =
-  GitBranchModification { _gitBranch :: String, _gitModification :: String } deriving stock (Eq, Show)
+  GitBranchModification { _gitBranch :: T.Text, _gitModification :: T.Text } deriving stock (Eq, Show)
 
-newtype Hostname = Hostname { _hostname :: String } deriving stock (Eq, Show)
+newtype Hostname = Hostname { _hostname :: T.Text } deriving stock (Eq, Show)
 
-newtype Path = Path { _path :: String } deriving stock (Eq, Show)
+newtype Path = Path { _path :: T.Text } deriving stock (Eq, Show)
 
-newtype Prompt = Prompt { _prompt :: String } deriving stock (Eq, Show)
+newtype Prompt = Prompt { _prompt :: T.Text } deriving stock (Eq, Show)
 
-newtype PromptSeparator = PromptSeparator { _promptSeparator :: String } deriving stock (Eq, Show)
+newtype PromptSeparator = PromptSeparator { _promptSeparator :: T.Text } deriving stock (Eq, Show)
 
-newtype DateTime = DateTime { _dateTime :: String } deriving stock (Eq, Show)
+newtype DateTime = DateTime { _dateTime :: T.Text } deriving stock (Eq, Show)
 
-newtype User = User { _user :: String } deriving stock (Eq, Show)
+newtype User = User { _user :: T.Text } deriving stock (Eq, Show)
 
 data PromptBehaviour (m :: Type -> Type) =
   PromptBehaviour {

@@ -3,6 +3,8 @@ module Commandline.CommandlineOptionsSpec where
 import Test.Tasty.HUnit                (assertFailure, assertBool, (@?=), Assertion)
 import Data.Semigroup                  ((<>))
 
+import qualified Data.Text as T
+
 import Commandline.CommandlineOptions
 import Options.Applicative
 import Options.Applicative.Types
@@ -16,7 +18,7 @@ newtype DefaultVal = DefaultVal { _defaultVal :: String }
 
 unit_parsesHostname :: Assertion
 unit_parsesHostname =
-  runParser parseHostname ["--hostname", "DreamMachine"] $ Just (Hostname "DreamMachine")
+  runParser parseHostname ["--hostname", "DreamMachine"] $ Just (Hostname . T.pack $ "DreamMachine")
 
 unit_parsesMaxPathLength :: Assertion
 unit_parsesMaxPathLength =
@@ -70,10 +72,10 @@ unit_parseOptionStatusWithDisabledFlag :: Assertion
 unit_parseOptionStatusWithDisabledFlag = runParser (parseOptionStatus "whatever") ["--no-whatever"] Disabled
 
 unit_parsePrompt :: Assertion
-unit_parsePrompt = runParser parsePrompt ["--prompt", "|> "] (Prompt "|> ")
+unit_parsePrompt = runParser parsePrompt ["--prompt", "|> "] (Prompt . T.pack $ "|> ")
 
 unit_parsePromptSeparator :: Assertion
-unit_parsePromptSeparator = runParser parsePromptSeparator ["--prompt-separator", "#"] (PromptSeparator "#")
+unit_parsePromptSeparator = runParser parsePromptSeparator ["--prompt-separator", "#"] (PromptSeparator . T.pack $ "#")
 
 unit_parseConfig :: Assertion
 unit_parseConfig = runParser parseConfig [] $

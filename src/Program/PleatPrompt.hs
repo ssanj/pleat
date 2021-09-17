@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Program.PleatPrompt
        (
           -- Functions
@@ -9,10 +11,10 @@ module Program.PleatPrompt
        ) where
 
 import qualified Feature.Feature as F
+import qualified Data.Text       as T
 
 import Control.Applicative ((<|>), liftA2)
 import Data.Maybe          (catMaybes)
-import Data.List           (intercalate)
 import Commandline.CommandlineOptions (PleatCommand(..), versionInfo, versionString)
 
 import Program.Model
@@ -36,7 +38,7 @@ promptBehaviour behaviour config = do
                                                           ,  GitInfo <$> gitBranches
                                                           ,  PromptSuffix <$> promptSuffix
                                                           ]
-  pure fullPrompt
+  pure $ T.unpack fullPrompt
 
 prompt :: PleatCommand -> IO String
 prompt PleatVersionCommand = pure $ versionString versionInfo
@@ -53,7 +55,7 @@ prompt (PleatConfigCommand config) =
                     F.processPromptSuffix
                     F.processPromptSeparator
 
-showPromptable :: Promptable -> String
+showPromptable :: Promptable -> T.Text
 showPromptable (LocalTime (F.DateTime dateTime))                    = dateTime
 showPromptable (Login (F.User user))                                = user
 showPromptable (Machine (F.Hostname hostname))                      = hostname
@@ -65,6 +67,6 @@ showPromptable (PromptSuffix (F.Prompt suffix))                     = suffix
 mkLoginAtMachine :: Maybe F.User -> Maybe F.Hostname -> Maybe Promptable
 mkLoginAtMachine user hostname = (liftA2 LoginAtMachine user hostname) <|> (Login <$> user) <|> (Machine <$> hostname)
 
-combinePromptables :: (a -> String) -> String -> [Maybe a] -> String
-combinePromptables toString sep = intercalate sep . fmap toString . catMaybes
+combinePromptables :: (a -> T.Text) -> T.Text -> [Maybe a] -> T.Text
+combinePromptables toText sep = T.intercalate sep . fmap toText . catMaybes
 

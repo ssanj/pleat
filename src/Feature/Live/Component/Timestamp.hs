@@ -7,6 +7,8 @@ module Feature.Live.Component.Timestamp
        ) where
 
 import qualified Feature.Live.Internal as A
+import qualified Data.Text             as T
+
 import Config
 import Feature.Model (DateTime(..))
 
@@ -15,4 +17,4 @@ processTimestamp Config { _pleatTimestampOption = OptionOn TimestampOption } = f
 processTimestamp Config { _pleatTimestampOption = OptionOff }                = pure Nothing
 
 processTime :: A.LocalTime  -> DateTime
-processTime (A.LocalTime localTime) = DateTime $ "[" <> (take 19 localTime) <> "]"
+processTime (A.LocalTime localTime) = DateTime . T.pack $ "[" <> (take 19 localTime) <> "]"

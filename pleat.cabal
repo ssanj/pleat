@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5ffbbfa4e1ca49660e8b004509ccbe94afbc34b6b37827fcab1ede933c91a519
+-- hash: f9a5c5186abd98cf92405f3a97b7f5639cd86d919c6dab4807cb34223539ba80
 
 name:           pleat
 version:        0.2.0.10
@@ -96,6 +96,7 @@ test-suite pleat-test
       Feature.Live.Parser.GitParserSpec
       Program.ProgramPromptBehaviourSpec
       Program.ProgramSpec
+      SampleSpec
       Paths_pleat
   hs-source-dirs:
       test
@@ -111,4 +112,5 @@ test-suite pleat-test
     , tasty-discover
     , tasty-hedgehog
     , tasty-hunit
+    , text
   default-language: Haskell2010

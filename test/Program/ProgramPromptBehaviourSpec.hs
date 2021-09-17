@@ -1,8 +1,9 @@
-
 module Program.ProgramPromptBehaviourSpec where
 
 import Test.Tasty.HUnit      ((@?=), Assertion)
 import Data.Functor.Identity (Identity(..))
+
+import qualified Data.Text as T
 
 -- import qualified Hedgehog              as H
 -- import qualified Hedgehog.Gen          as Gen
@@ -62,11 +63,11 @@ unit_promptBehaviourAllFeaturesNoPrompt =
 
 allFeatures :: F.PromptBehaviour Identity
 allFeatures =
-  let localTime       = const $ Identity $ Just $ F.DateTime "[2020-05-18 12:27:53]"
-      user            = Identity $ Just $ F.User "jayneway"
-      hostname        = const $  Identity $ Just $ F.Hostname "voyager"
-      path            = const $  Identity $ Just $ F.Path "/medical/lab/"
-      gitBranches     = const $  Identity $ Just $ F.GitBranchModification "[upgrade-hologram --> remote/upgrade-hologram]" ":*"
-      promptSuffix    = const $  Just $ F.Prompt "-->"
-      promptSeparator = const $ F.PromptSeparator ":"
+  let localTime       = const $ Identity $ Just $ F.DateTime . T.pack $ "[2020-05-18 12:27:53]"
+      user            = Identity $ Just $ F.User . T.pack $ "jayneway"
+      hostname        = const $  Identity $ Just $ F.Hostname . T.pack $ "voyager"
+      path            = const $  Identity $ Just $ F.Path . T.pack $ "/medical/lab/"
+      gitBranches     = const $  Identity $ Just $ F.GitBranchModification (T.pack "[upgrade-hologram --> remote/upgrade-hologram]") (T.pack ":*")
+      promptSuffix    = const $  Just $ F.Prompt . T.pack $ "-->"
+      promptSeparator = const $ F.PromptSeparator . T.pack $ ":"
   in F.PromptBehaviour localTime user hostname path gitBranches promptSuffix promptSeparator

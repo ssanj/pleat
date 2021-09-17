@@ -16,6 +16,7 @@ module Feature.Live.Internal.File
 import qualified System.Environment as E
 import qualified System.Directory   as D
 import qualified Network.HostName   as N
+import qualified Data.Text          as T
 
 import Feature.Live.Internal.Safe (ignoringError)
 import Config                     (Hostname(..))
@@ -30,7 +31,7 @@ getUser :: IO (Maybe User)
 getUser = ignoringError (User <$> E.getEnv "USER")
 
 getHostname :: IO Hostname
-getHostname = Hostname <$> N.getHostName
+getHostname = Hostname . T.pack <$> N.getHostName
 
 isGitRepo :: IO (Maybe Bool)
 isGitRepo = ignoringError $ (<> "/.git") <$> D.getCurrentDirectory >>= D.doesDirectoryExist

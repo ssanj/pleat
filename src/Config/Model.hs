@@ -15,13 +15,15 @@ module Config.Model
         ,  PromptSeparator(..)
         ) where
 
+import qualified Data.Text as T
+
 newtype HostnameOption  = HostnameOption { _overrideHostname ::  Maybe Hostname } deriving stock (Eq, Show)
 
-newtype Hostname        = Hostname { _hostname :: String } deriving stock (Eq, Show)
+newtype Hostname        = Hostname { _hostname :: T.Text } deriving stock (Eq, Show)
 
-newtype Prompt          = Prompt { _prompt :: String } deriving stock (Eq, Show)
+newtype Prompt          = Prompt { _prompt :: T.Text } deriving stock (Eq, Show)
 
-newtype PromptSeparator = PromptSeparator { _promptSeparator :: String } deriving stock (Eq, Show)
+newtype PromptSeparator = PromptSeparator { _promptSeparator :: T.Text } deriving stock (Eq, Show)
 
 newtype MaxPathLength   = MaxPathLength { _pathLength :: Int } deriving stock (Eq, Show)
 

@@ -89,4 +89,5 @@ tests:
     - parsec
     - optparse-applicative
     - split
+    - text
 
